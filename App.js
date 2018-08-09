@@ -7,6 +7,7 @@ import {
   StatusBar
 } from 'react-native';
 
+import Title from "./app/components/Title"
 import Login from "./app/components/Login";
 import Dashboard from "./app/components/Dashboard";
 import Register from "./app/components/Register";
@@ -25,7 +26,7 @@ class Home extends Component<{}> {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor="powderblue" />
-        <Login navigation={this.props.navigation} />
+        <Title navigation={this.props.navigation} />
       </View>
     );
   }
@@ -36,6 +37,12 @@ export default App = StackNavigator({
     screen: Home,
     navigationOptions: {
       title: "Home"
+    }
+  },
+  Title: {
+    screen: Title,
+    navigationOptions: {
+      title: "Title"
     }
   },
   Login: {

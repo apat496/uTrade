@@ -1,18 +1,16 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  AsyncStorage,
-  Image,
+  StyleSheet,
+  Text,
+  View,
   TextInput,
-  StyleSheet, // CSS-like styles
-  Text, // Renders text
-  View // Container component
+  TouchableOpacity,
+  Image,
+  KeyboardAvoidingView
 } from "react-native";
 
 import { StackNavigator } from "react-navigation";
-//import Spinner from "react-native-loading-spinner-overlay";
 
 export default class Login extends Component {
   constructor() {
@@ -26,62 +24,52 @@ export default class Login extends Component {
     headerStyle: {
       backgroundColor: "powderblue",
       elevation: null
-    },
-    header: null
+    }
   };
+
   async onLoginPress() {
     const { email, password } = this.state;
     console.log(email);
     console.log(password);
-    await AsyncStorage.setItem("email", email);
-    await AsyncStorage.setItem("password", password);
     this.props.navigation.navigate("Dashboard");
   }
+
   render() {
     return (
-      <View style={styles.container}>
-        <View behavior="padding" style={styles.container}>
-          <View style={styles.logoContainer}>
-            <Image style={styles.logo} source={require("./utrade.png")} />
-          </View>
-          <KeyboardAvoidingView style={styles.keyboard}>
-            <TextInput
-              placeholder="Username"
-              placeholderTextColor="rgba(255,255,255,0.7)"
-              returnKeyType="next"
-              onSubmitEditing={() => this.passwordInput.focus()}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={this.state.email}
-              onChangeText={email => this.setState({ email })}
-            />
-            <TextInput
-              placeholder="Password"
-              placeholderTextColor="rgba(255,255,255,0.7)"
-              returnKeyType="go"
-              secureTextEntry
-              ref={input => (this.passwordInput = input)}
-              value={this.state.password}
-              onChangeText={password => this.setState({ password })}
-            />
-
-            <TouchableOpacity
-              style={styles.buttonContainer}
-              onPress={this.onLoginPress.bind(this)}
-            >
-              <Text style={styles.buttonText}>LOGIN</Text>
-            </TouchableOpacity>
-          </KeyboardAvoidingView>
+      <View behavior="padding" style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image style={styles.logo} source={require("./utrade.png")} />
+          <Text style={styles.subtext}>Log In</Text>
         </View>
-        <TouchableOpacity style={styles.button}>
-          <Text
-            style={styles.buttonText}
-            onPress={() => this.props.navigation.navigate("Register")}
-            title="Sign up"
-          >
-            Sign up
-          </Text>
+        <KeyboardAvoidingView>
+          <TextInput
+            value={this.state.email}
+            onChangeText={email => this.setState({ email })}
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            returnKeyType="next"
+            onSubmitEditing={() => this.passwordInput.focus()}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <TextInput
+            value={this.state.password}
+            onChangeText={password => this.setState({ password })}
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            returnKeyType="go"
+            secureTextEntry
+            ref={input => (this.passwordInput = input)}
+          />
+        </KeyboardAvoidingView>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={this.onLoginPress.bind(this)}
+        >
+          <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>
     );
@@ -103,12 +91,21 @@ const styles = StyleSheet.create({
     width: 200,
     height: 150
   },
+  input: {
+    height: 50,
+    width: 350,
+    marginBottom: 10,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    color: "black",
+    paddingHorizontal: 10
+  },
   subtext: {
-    color: "#ffffff",
-    marginTop: 10,
+    color: "black",
     width: 160,
     textAlign: "center",
-    opacity: 0.8
+    fontSize: 40,
+    fontWeight: "bold",
+    marginTop: 20
   },
   keyboard:{
     margin: 20,
@@ -119,9 +116,15 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.2)",
     paddingVertical: 15
   },
+  buttonContainer: {
+    backgroundColor: "black",
+    borderColor: "powderblue",
+    borderWidth: 2,
+    paddingVertical: 15
+  },
   buttonText: {
     textAlign: "center",
-    color: "#FFF",
+    color: "white",
     fontWeight: "700"
   },
   button: {
