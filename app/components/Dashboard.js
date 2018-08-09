@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import Swiper from "react-native-swiper";
 
-import { Cell, Section, TableView } from "react-native-tableview-simple";
 import ScrollableTabView from "react-native-scrollable-tab-view";
 
 import {
