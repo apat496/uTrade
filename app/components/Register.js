@@ -10,8 +10,6 @@ import {
   KeyboardAvoidingView
 } from "react-native";
 
-import { StackNavigator } from "react-navigation";
-
 export default class Register extends Component {
   constructor(props) {
     super(props);
@@ -143,10 +141,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontWeight: "700"
-  },
-  button: {
-    backgroundColor: "powderblue",
-    paddingVertical: 15
   }
 });
 

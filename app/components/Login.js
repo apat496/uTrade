@@ -10,8 +10,6 @@ import {
   KeyboardAvoidingView
 } from "react-native";
 
-import { StackNavigator } from "react-navigation";
-
 export default class Login extends Component {
   constructor() {
     super();
@@ -126,10 +124,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontWeight: "700"
-  },
-  button: {
-    backgroundColor: "powderblue",
-    paddingVertical: 15
   }
 });
 

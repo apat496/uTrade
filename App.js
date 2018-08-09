@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   Platform,
   StyleSheet,
   Text,
   View,
   StatusBar
-} from 'react-native';
+} from "react-native";
 
 import Title from "./app/components/Title"
 import Login from "./app/components/Login";
@@ -25,7 +25,7 @@ class Home extends Component<{}> {
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="powderblue" />
+        <StatusBar hidden/>
         <Title navigation={this.props.navigation} />
       </View>
     );

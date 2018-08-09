@@ -8,8 +8,6 @@ import {
   View // Container component
 } from "react-native";
 
-import { StackNavigator } from "react-navigation";
-
 export default class Title extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -78,10 +76,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "700"
   },
-  button: {
-    backgroundColor: "powderblue",
-    paddingVertical: 15
-  }
 });
 
 AppRegistry.registerComponent("Title", () => Title);
