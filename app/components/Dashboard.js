@@ -20,6 +20,7 @@ import {
 } from "victory-native";
 
 import NavBar from "./NavBar";
+import Table from "./Table";
 
 const colors = [
   "red",
@@ -132,25 +133,13 @@ export default class Dashboard extends Component {
     });
   }
 
-  renderTable(tableName) {
-    return this.state[tableName].map((entry, i) => {
-      return(
-        <View key={i} style={styles.row}>
-          <View style={styles.cell}>
-            <Text style={styles.cellText}>{entry.ticker}</Text>
-          </View>
-          <View style={styles.cell}>
-            <Text style={styles.cellText}>{entry.price}</Text>
-          </View>
-          <View style={styles.cell}>
-            <Text style={styles.cellText}>{entry.delta}</Text>
-          </View>
-        </View>
-      );
-    });
-  }
-
   render() {
+    var tableHeader = ["Ticker", "Price", "Delta"];
+    var winnerContents = this.state.winners.map(
+      (winner) => [winner.ticker, winner.price, winner.delta]);
+    var loserContents = this.state.losers.map(
+      (loser) => [loser.ticker, loser.price, loser.delta]);
+
     return (
       <View behavior="padding" style={styles.container}>
         <NavBar navigation={this.props.navigation} />
@@ -159,36 +148,14 @@ export default class Dashboard extends Component {
         </Swiper>
         <ScrollableTabView>
           <ScrollView tabLabel="Winners">
-            <View style={styles.column}>
-              <View style={styles.headerRow}>
-                <View style={styles.cell}>
-                  <Text style={styles.cellText}>Ticker</Text>
-                </View>
-                <View style={styles.cell}>
-                  <Text style={styles.cellText}>Price</Text>
-                </View>
-                <View style={styles.cell}>
-                  <Text style={styles.cellText}>Delta</Text>
-                </View>
-              </View>
-              {this.renderTable("winners")}
-            </View>
+            <Table headerContent={tableHeader}
+                   tableContents={winnerContents}
+            />
           </ScrollView>
           <ScrollView tabLabel="Losers">
-            <View style={styles.column}>
-              <View style={styles.headerRow}>
-                <View style={styles.cell}>
-                  <Text style={styles.cellText}>Ticker</Text>
-                </View>
-                <View style={styles.cell}>
-                  <Text style={styles.cellText}>Price</Text>
-                </View>
-                <View style={styles.cell}>
-                  <Text style={styles.cellText}>Delta</Text>
-                </View>
-              </View>
-              {this.renderTable("losers")}
-            </View>
+            <Table headerContent={tableHeader}
+                   tableContents={loserContents}
+            />
           </ScrollView>
         </ScrollableTabView>
       </View>

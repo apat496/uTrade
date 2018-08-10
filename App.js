@@ -3,13 +3,15 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View,
+  SafeAreaView,
   StatusBar
 } from "react-native";
 
 import Title from "./app/components/Title"
 import Login from "./app/components/Login";
 import Dashboard from "./app/components/Dashboard";
+import StockSearch from "./app/components/StockSearch";
+import StockSummary from "./app/components/StockSummary";
 import Register from "./app/components/Register";
 import AccountInfo from "./app/components/AccountInfo"
 import Help from "./app/components/Help"
@@ -28,10 +30,10 @@ class Home extends Component<{}> {
   };
   render() {
     return (
-      <View style={styles.container}>
-        <StatusBar hidden/>
+      <SafeAreaView style={styles.container}>
+        <StatusBar backgroundColor="powderblue" />
         <Title navigation={this.props.navigation} />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -87,8 +89,14 @@ export default App = StackNavigator({
   },
   CreateLeague:{
     screen: CreateLeague,
-    navigationOptions:{
+    navigationOptions: {
       title: "CreateLeague"
+    }
+  },
+  StockSearch: {
+    screen: StockSearch,
+    navigationOptions: {
+      title: "StockSearch"
     }
   }
 });

@@ -35,7 +35,7 @@ export default class NavBar extends Component {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={() => this.onPress("Dashboard")}
+          onPress={() => this.onPress("StockSearch")}
         >
           <Text style={styles.buttonText}>Stocks</Text>
         </TouchableOpacity>
@@ -43,7 +43,7 @@ export default class NavBar extends Component {
           style={styles.buttonContainer}
           onPress={() => this.onPress("AccountInfo")}
         >
-          <Text style={styles.buttonText}>Account</Text>
+          <Text style={styles.buttonText}>Info</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonContainer}

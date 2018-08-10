@@ -59,7 +59,7 @@ export default class Register extends Component {
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="next"
             ref={input => (this.emailInput = input)}
-            onSubmitEditing={() => this.passwordCInput.focus()}
+            onSubmitEditing={() => this.passwordInput.focus()}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
@@ -72,13 +72,13 @@ export default class Register extends Component {
             placeholder="Password"
             secureTextEntry={true}
             placeholderTextColor="rgba(0,0,0,0.7)"
-            ref={input => (this.passwordCInput = input)}
-            onSubmitEditing={() => this.passwordInput.focus()}
+            ref={input => (this.passwordInput = input)}
+            onSubmitEditing={() => this.passwordCInput.focus()}
             returnKeyType="next"
             secureTextEntry
           />
           <TextInput
-            value={this.state.password}
+            value={this.state.password_confirmation}
             onChangeText={password_confirmation => this.setState({ password_confirmation })}
             style={styles.input}
             placeholder="Confirm Password"
@@ -86,7 +86,7 @@ export default class Register extends Component {
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="go"
             secureTextEntry
-            ref={input => (this.passwordInput = input)}
+            ref={input => (this.passwordCInput = input)}
           />
         </KeyboardAvoidingView>
         <TouchableOpacity
