@@ -13,6 +13,8 @@ import Dashboard from "./app/components/Dashboard";
 import Register from "./app/components/Register";
 import AccountInfo from "./app/components/AccountInfo"
 import Help from "./app/components/Help"
+import CreateLeague from "./app/components/CreateLeague";
+import JoinLeague from "./app/components/JoinLeague";
 
 import { StackNavigator } from "react-navigation";
 
@@ -75,6 +77,18 @@ export default App = StackNavigator({
     screen: Help,
     navigationOptions: {
       title: "Help"
+    }
+  },
+  JoinLeague: {
+    screen: JoinLeague,
+    navigationOptions: {
+      title: "JoinLeague"
+    }
+  },
+  CreateLeague:{
+    screen: CreateLeague,
+    navigationOptions:{
+      title: "CreateLeague"
     }
   }
 });
