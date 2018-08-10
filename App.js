@@ -11,6 +11,8 @@ import Title from "./app/components/Title"
 import Login from "./app/components/Login";
 import Dashboard from "./app/components/Dashboard";
 import Register from "./app/components/Register";
+import AccountInfo from "./app/components/AccountInfo"
+import Help from "./app/components/Help"
 
 import { StackNavigator } from "react-navigation";
 
@@ -61,6 +63,18 @@ export default App = StackNavigator({
     screen: Dashboard,
     navigationOptions: {
       title: "Dashboard"
+    }
+  },
+  AccountInfo: {
+    screen: AccountInfo,
+    navigationOptions: {
+      title: "AccountInfo"
+    }
+  },
+  Help: {
+    screen: Help,
+    navigationOptions: {
+      title: "Help"
     }
   }
 });

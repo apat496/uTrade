@@ -41,13 +41,13 @@ export default class NavBar extends Component {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={() => this.onPress("Dashboard")}
+          onPress={() => this.onPress("AccountInfo")}
         >
           <Text style={styles.buttonText}>Account</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={() => this.onPress("Dashboard")}
+          onPress={() => this.onPress("Help")}
         >
           <Text style={styles.buttonText}>Help</Text>
         </TouchableOpacity>
