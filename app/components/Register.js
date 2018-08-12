@@ -7,7 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  SafeAreaView
 } from "react-native";
 
 export default class Register extends Component {
@@ -37,12 +38,13 @@ export default class Register extends Component {
 
   render() {
     return (
-      <View behavior="padding" style={styles.container}>
+      <SafeAreaView behavior="padding" style={styles.container}>
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Sign Up</Text>
         </View>
-        <KeyboardAvoidingView>
+        <KeyboardAvoidingView behavior="padding"
+                              enabled>
           <TextInput
             value={this.state.name}
             onChangeText={name => this.setState({ name })}
@@ -88,14 +90,14 @@ export default class Register extends Component {
             secureTextEntry
             ref={input => (this.passwordCInput = input)}
           />
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={this.onRegisterPress.bind(this)}
+          >
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
         </KeyboardAvoidingView>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={this.onRegisterPress.bind(this)}
-        >
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
 }
