@@ -30,6 +30,7 @@ export default class Table extends Component {
     });
   }
 
+/*
   renderContents() {
     return this.props.tableContents.map((row, i) => {
       return (
@@ -39,8 +40,33 @@ export default class Table extends Component {
       );
     });
   }
+*/
+
+async onPress(index) {
+  console.log(this.props.presses[index]);
+  this.props.navigation.navigate(this.props.presses[index])
+}
+
+renderContents() {
+  return this.props.tableContents.map((row, i) => {
+    return (
+      <View key={i} style={styles.row}>
+      {this.props.presses ?
+      <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={this.onPress.bind(this, i)}
+        >
+          <Text style={styles.buttonText}>{this.renderRow(row)}</Text>
+        </TouchableOpacity> :
+        <Text style={styles.buttonText}>{this.renderRow(row)}</Text>
+      }
+      </View>
+    );
+  });
+}
 
   render() {
+
     return (
       <View style={styles.column}>
         <View style={styles.headerRow}>

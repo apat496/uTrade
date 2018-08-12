@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View
 } from "react-native";
 import Swiper from "react-native-swiper";
@@ -102,6 +103,10 @@ export default class Dashboard extends Component {
     header: null
   };
 
+  async onPress(button) {
+    this.props.navigation.navigate(button)
+  }
+
   renderLines(leagueNum) {
     return this.state.leagues[leagueNum].members.map((member, i) => {
       return(
@@ -122,13 +127,18 @@ export default class Dashboard extends Component {
   renderSwipes() {
     return this.state.leagues.map((league, i) => {
       return(
-        <View key={i} style={styles.slide}>
-          <Text style={styles.text}>{league.name}</Text>
-          <VictoryChart theme={VictoryTheme.material}
-                        padding={{ top: 5, bottom: 125, left: 50, right: 50 }}>
-            {this.renderLines(i)}
-          </VictoryChart>
-        </View>
+        <TouchableOpacity
+          onPress={() => this.onPress("LeagueHome")}
+          key={i}
+        >
+          <View style={styles.slide}>
+            <Text style={styles.text}>{league.name}</Text>
+            <VictoryChart theme={VictoryTheme.material}
+                          padding={{ top: 5, bottom: 125, left: 50, right: 50 }}>
+              {this.renderLines(i)}
+            </VictoryChart>
+          </View>
+        </TouchableOpacity>
       );
     });
   }
@@ -176,9 +186,12 @@ const styles = StyleSheet.create({
     backgroundColor: "powderblue",
   },
   text: {
-    color: "black",
+    color: "white",
     fontSize: 30,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    textShadowColor: "black",
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5
   },
   table: {
   },

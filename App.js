@@ -17,6 +17,7 @@ import AccountInfo from "./app/components/AccountInfo"
 import Help from "./app/components/Help"
 import CreateLeague from "./app/components/CreateLeague";
 import JoinLeague from "./app/components/JoinLeague";
+import LeagueHome from "./app/components/LeagueHome";
 
 import { StackNavigator } from "react-navigation";
 
@@ -97,6 +98,12 @@ export default App = StackNavigator({
     screen: StockSearch,
     navigationOptions: {
       title: "StockSearch"
+    }
+  },
+  LeagueHome: {
+    screen: LeagueHome,
+    navigationOptions: {
+      title: "LeagueHome"
     }
   }
 });
