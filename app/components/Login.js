@@ -11,14 +11,9 @@ import {
   KeyboardAvoidingView
 } from "react-native";
 
+import { authenticate } from "./Fetcher";
+
 export default class Login extends Component {
-  constructor() {
-    super();
-    this.state = {
-      email: "",
-      password: ""
-    };
-  }
   static navigationOptions = {
     headerStyle: {
       backgroundColor: "powderblue",
@@ -26,11 +21,32 @@ export default class Login extends Component {
     }
   };
 
+  constructor() {
+    super();
+    this.state = {
+      username: "",
+      password: "",
+      authenticationStatus: 200
+    };
+  }
+
   async onLoginPress() {
-    const { email, password } = this.state;
-    console.log(email);
-    console.log(password);
-    this.props.navigation.navigate("Dashboard");
+    const { username, password } = this.state;
+
+    if (username === "" || password === "") {
+      this.setState({ authenticationStatus: 400 });
+      return;
+    }
+
+    const responseJson = await authenticate(username, password.hashCode());
+
+    if (responseJson.status === 200) {
+      this.props.navigation.navigate("Dashboard", {
+        userId: responseJson.body.userId
+      });
+    } else {
+      this.setState({authenticationStatus: responseJson.status});
+    }
   }
 
   render() {
@@ -39,18 +55,25 @@ export default class Login extends Component {
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Log In</Text>
+          {
+            this.state.authenticationStatus === 400 &&
+            <Text style={styles.failureText}>Username not found</Text>
+          }
+          {
+            this.state.authenticationStatus === 403 &&
+            <Text style={styles.failureText}>Incorrect Password</Text>
+          }
         </View>
         <KeyboardAvoidingView behavior="padding"
                               enabled>
           <TextInput
-            value={this.state.email}
-            onChangeText={email => this.setState({ email })}
+            value={this.state.username}
+            onChangeText={username => this.setState({ username })}
             style={styles.input}
             placeholder="Username"
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="next"
             onSubmitEditing={() => this.passwordInput.focus()}
-            keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
           />
@@ -107,6 +130,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 20
   },
+  failureText: {
+    color: "red",
+    width: 160,
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 20
+  },
   keyboard:{
     margin: 20,
     padding: 20,
@@ -130,3 +161,16 @@ const styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent("Login", () => Login);
+
+String.prototype.hashCode = function() {
+    var hash = 0;
+    if (this.length == 0) {
+        return hash;
+    }
+    for (var i = 0; i < this.length; i++) {
+        var char = this.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}

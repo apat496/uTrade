@@ -11,16 +11,9 @@ import {
   SafeAreaView
 } from "react-native";
 
+import { createUser } from "./Fetcher";
+
 export default class Register extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      name: "",
-      password: "",
-      password_confirmation: ""
-    };
-  }
   static navigationOptions = {
     headerStyle: {
       backgroundColor: "powderblue",
@@ -28,12 +21,41 @@ export default class Register extends Component {
     }
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      name: "",
+      password: "",
+      password_confirmation: "",
+      registrationStatus: 200
+    };
+  }
+
   async onRegisterPress() {
-    const { email, password, name } = this.state;
-    console.log(email);
-    console.log(name);
-    console.log(password);
-    this.props.navigation.navigate("Dashboard");
+    const { email, password, password_confirmation, name } = this.state;
+
+    if (email === "" || name === "" || password === "") {
+      this.setState({ registrationStatus: 100 });
+      return;
+    }
+
+    if (password !== password_confirmation) {
+      this.setState({ registrationStatus: 300 });
+      return;
+    }
+
+    const responseJson = await createUser(email, name, password.hashCode());
+
+    console.log(responseJson);
+
+    if (responseJson.status === 204) {
+      this.props.navigation.navigate("Dashboard", {
+        userId: responseJson.userId
+      });
+    } else {
+      this.setState({ registrationStatus: responseJson.status });
+    }
   }
 
   render() {
@@ -42,6 +64,18 @@ export default class Register extends Component {
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Sign Up</Text>
+          {
+            this.state.registrationStatus === 100 &&
+            <Text style={styles.failureText}>Input Field is Blank</Text>
+          }
+          {
+            this.state.registrationStatus === 300 &&
+            <Text style={styles.failureText}>Password Does Not Match</Text>
+          }
+          {
+            this.state.registrationStatus === 400 &&
+            <Text style={styles.failureText}>Username Already Exists</Text>
+          }
         </View>
         <KeyboardAvoidingView behavior="padding"
                               enabled>
@@ -133,6 +167,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 20
   },
+  failureText: {
+    color: "red",
+    width: 160,
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 20
+  },
   buttonContainer: {
     backgroundColor: "black",
     borderColor: "powderblue",
@@ -147,3 +189,16 @@ const styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent("Register", () => Register);
+
+String.prototype.hashCode = function() {
+    var hash = 0;
+    if (this.length == 0) {
+        return hash;
+    }
+    for (var i = 0; i < this.length; i++) {
+        var char = this.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}
