@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
   KeyboardAvoidingView,
+  SafeAreaView,
   TouchableOpacity
 } from "react-native";
 
@@ -52,55 +53,56 @@ export default class Help extends Component {
     }));
   }
 
-
   render(){
     const { width } = Dimensions.get("window");
     return(
-      <View style={styles.container}>
-	     <Text style={styles.videotitle}> Create a League </Text>
-	      <Video source={{ uri: 'https://s3.us-east-2.amazonaws.com/utrade-videos/TestVideoOne.mp4' }}
-        style={styles.video}
-        isLooping
-        shouldPlay={this.state.shouldPlayOne}
-        isMuted={this.state.muteOne}
-        resizeMode="cover"/>
-        <View style={styles.controlBar}>
-          <MaterialIcons
-            name={this.state.muteOne ? "volume-mute" : "volume-up"}
-            size={30}
-            color="white"
-            onPress={this.handleVolumeOne}
-          />
-          <MaterialIcons
-            name={this.state.shouldPlayOne ? "pause" : "play-arrow"}
-            size={30}
-            color="white"
-            onPress={this.handlePlayAndPauseOne}
-          />
-        </View>
-        <Text style={styles.videotitle}> Buy/Sell Stock </Text>
-        <Video source={{ uri: 'https://s3.us-east-2.amazonaws.com/utrade-videos/TestVideoTwo.mp4' }}
-        style={styles.video}
-        shouldPlay={this.state.shouldPlayTwo}
-        isMuted={this.state.muteTwo}
-        isLooping
-        resizeMode="cover"/>
-        <View style={styles.controlBar}>
-          <MaterialIcons
-            name={this.state.muteTwo ? "volume-mute" : "volume-up"}
-            size={30}
-            color="white"
-            onPress={this.handleVolumeTwo}
-          />
-          <MaterialIcons
-            name={this.state.shouldPlayTwo ? "pause" : "play-arrow"}
-            size={30}
-            color="white"
-            onPress={this.handlePlayAndPauseTwo}
-          />
-        </View>
-
-      </View>
+      <SafeAreaView style={styles.container}>
+        <NavBar navigation={this.props.navigation} />
+          <ScrollView>
+    	    <Text style={styles.videotitle}> Create a League </Text>
+  	      <Video source={{ uri: 'https://s3.us-east-2.amazonaws.com/utrade-videos/TestVideoOne.mp4' }}
+          style={styles.video}
+          isLooping
+          shouldPlay={this.state.shouldPlayOne}
+          isMuted={this.state.muteOne}
+          resizeMode="cover"/>
+          <View style={styles.controlBar}>
+            <MaterialIcons
+              name={this.state.muteOne ? "volume-mute" : "volume-up"}
+              size={30}
+              color="white"
+              onPress={this.handleVolumeOne}
+            />
+            <MaterialIcons
+              name={this.state.shouldPlayOne ? "pause" : "play-arrow"}
+              size={30}
+              color="white"
+              onPress={this.handlePlayAndPauseOne}
+            />
+          </View>
+          <Text style={styles.videotitle}> Buy/Sell Stock </Text>
+          <Video source={{ uri: 'https://s3.us-east-2.amazonaws.com/utrade-videos/TestVideoTwo.mp4' }}
+          style={styles.video}
+          shouldPlay={this.state.shouldPlayTwo}
+          isMuted={this.state.muteTwo}
+          isLooping
+          resizeMode="cover"/>
+          <View style={styles.controlBar}>
+            <MaterialIcons
+              name={this.state.muteTwo ? "volume-mute" : "volume-up"}
+              size={30}
+              color="white"
+              onPress={this.handleVolumeTwo}
+            />
+            <MaterialIcons
+              name={this.state.shouldPlayTwo ? "pause" : "play-arrow"}
+              size={30}
+              color="white"
+              onPress={this.handlePlayAndPauseTwo}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }

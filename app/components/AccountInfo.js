@@ -8,6 +8,7 @@ import {
   Text,
   TextInput,
   View,
+  SafeAreaView,
   KeyboardAvoidingView,
   TouchableOpacity
 } from "react-native";
@@ -20,36 +21,37 @@ import NavBar from "./NavBar";
 export default class AccountInfo extends Component {
   render(){
     return(
-      <View behavior="padding" style={styles.container}>
-          <Text style={styles.titletext}> Account Information</Text>
-          <Text style={styles.subheadertext}> Name </Text>
-          <Text style={styles.subtext}> John Doe </Text>
-          <Text style={styles.subheadertext}> Email </Text>
-          <Text style={styles.subtext}> ThisIsAnEmail@JUUL.com </Text>
-          <KeyboardAvoidingView>
-            <Text style={styles.subheadertext}> Change Password </Text>
-            <TextInput
-            style={styles.input}
-            placeholder="Current Password"
-            secureTextEntry={true}
-            />
-            <TextInput
-            style={styles.input}
-            placeholder="New Password"
-            secureTextEntry={true}
-            />
-            <TextInput
-            style={styles.input}
-            placeholder="Confirm New Password"
-            secureTextEntry={true}
-            />
-            </KeyboardAvoidingView>
-            <TouchableOpacity
-              style={styles.buttonContainer}s
-            >
-              <Text style={styles.buttonText}> Submit </Text>
-            </TouchableOpacity>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <NavBar navigation={this.props.navigation} />
+        <Text style={styles.titletext}> Account Information</Text>
+        <Text style={styles.subheadertext}> Name </Text>
+        <Text style={styles.subtext}> John Doe </Text>
+        <Text style={styles.subheadertext}> Email </Text>
+        <Text style={styles.subtext}> ThisIsAnEmail@JUUL.com </Text>
+        <KeyboardAvoidingView>
+          <Text style={styles.subheadertext}> Change Password </Text>
+          <TextInput
+          style={styles.input}
+          placeholder="Current Password"
+          secureTextEntry={true}
+          />
+          <TextInput
+          style={styles.input}
+          placeholder="New Password"
+          secureTextEntry={true}
+          />
+          <TextInput
+          style={styles.input}
+          placeholder="Confirm New Password"
+          secureTextEntry={true}
+          />
+          </KeyboardAvoidingView>
+          <TouchableOpacity
+            style={styles.buttonContainer}s
+          >
+            <Text style={styles.buttonText}> Submit </Text>
+          </TouchableOpacity>
+      </SafeAreaView>
     );
   }
 }

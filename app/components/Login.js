@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  SafeAreaView,
   KeyboardAvoidingView
 } from "react-native";
 
@@ -34,7 +35,7 @@ export default class Login extends Component {
 
   render() {
     return (
-      <View behavior="padding" style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Log In</Text>
@@ -69,7 +70,7 @@ export default class Login extends Component {
         >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
 }

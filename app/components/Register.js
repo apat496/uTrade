@@ -7,7 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  SafeAreaView
 } from "react-native";
 
 export default class Register extends Component {
@@ -37,7 +38,7 @@ export default class Register extends Component {
 
   render() {
     return (
-      <View behavior="padding" style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Sign Up</Text>
@@ -95,7 +96,7 @@ export default class Register extends Component {
         >
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
 }

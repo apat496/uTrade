@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  SafeAreaView,
   KeyboardAvoidingView
 } from "react-native";
 import NavBar from "./NavBar";
@@ -33,7 +34,7 @@ export default class JoinLeague extends Component {
 
   render() {
     return (
-      <View behavior="padding" style={styles.container}>
+      <SafeAreaView style={styles.container}>
       <NavBar navigation={this.props.navigation} />
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
@@ -57,7 +58,7 @@ export default class JoinLeague extends Component {
         >
           <Text style={styles.buttonText}>Join a league</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
 }

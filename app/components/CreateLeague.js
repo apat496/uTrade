@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  SafeAreaView,
   KeyboardAvoidingView
 } from "react-native";
 import NavBar from "./NavBar";
@@ -37,7 +38,7 @@ export default class CreateLeague extends Component {
 
   render() {
     return (
-      <View behavior="padding" style={styles.container}>
+      <SafeAreaView style={styles.container}>
       <NavBar navigation={this.props.navigation} />
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
@@ -57,7 +58,7 @@ export default class CreateLeague extends Component {
             value={this.state.leagueID}
             onChangeText={name => this.setState({ duration })}
             style={styles.input}
-            placeholder="Duration"
+            placeholder="Duration (Weeks)"
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="next"
             onSubmitEditing={() => this.durationInput.focus()}
@@ -78,7 +79,7 @@ export default class CreateLeague extends Component {
         >
           <Text style={styles.buttonText}>Create a League</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
 }

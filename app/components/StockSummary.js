@@ -7,7 +7,8 @@ import {
   StyleSheet, // CSS-like styles
   Text, // Renders text
   TextInput,
-  View // Container component
+  View, // Container component
+  SafeAreaView
 } from "react-native";
 
 import Autocomplete from "react-native-autocomplete-input";
@@ -188,7 +189,7 @@ export default class StockSearch extends Component {
     ];
 
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <NavBar navigation={this.props.navigation}/>
         <Text style={styles.text}>{this.state.ticker}</Text>
         <Text style={styles.text}>{stockInfo.price}</Text>
@@ -204,7 +205,7 @@ export default class StockSearch extends Component {
           </View>
           {this.renderBSContents()}
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }

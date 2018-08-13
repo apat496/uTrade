@@ -5,7 +5,8 @@ import {
   Image,
   StyleSheet, // CSS-like styles
   Text, // Renders text
-  View // Container component
+  View, // Container component
+  SafeAreaView
 } from "react-native";
 
 import Autocomplete from "react-native-autocomplete-input";
@@ -49,7 +50,7 @@ export default class StockSearch extends Component {
     const data = this.filterTickers(ticker);
 
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <NavBar navigation={this.props.navigation} />
         <Autocomplete
           data={data}
@@ -63,7 +64,7 @@ export default class StockSearch extends Component {
             </TouchableOpacity>
           )}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }

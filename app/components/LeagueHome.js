@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
   KeyboardAvoidingView,
+  SafeAreaView,
   TouchableOpacity
 } from "react-native";
 
@@ -118,7 +119,7 @@ export default class LeagueHome extends Component {
       (player) => [player.name, player.capital, player.delta]);
 
       return (
-      <View behavior="padding" style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <Text style={styles.text}> hello </Text>
         <VictoryChart theme={VictoryTheme.material}
                       padding={{ top: 5, bottom: 125, left: 50, right: 50 }}>
@@ -130,8 +131,7 @@ export default class LeagueHome extends Component {
           headerContent={tableHeader}
           tableContents={leaderboard}
         />
-
-      </View>
+      </SafeAreaView>
     );
   }
 }

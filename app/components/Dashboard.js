@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  SafeAreaView,
   View
 } from "react-native";
 import Swiper from "react-native-swiper";
@@ -151,7 +152,7 @@ export default class Dashboard extends Component {
       (loser) => [loser.ticker, loser.price, loser.delta]);
 
     return (
-      <View behavior="padding" style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <NavBar navigation={this.props.navigation} />
         <Swiper style={styles.wrapper}>
           {this.renderSwipes()}
@@ -168,7 +169,7 @@ export default class Dashboard extends Component {
             />
           </ScrollView>
         </ScrollableTabView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

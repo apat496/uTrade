@@ -3,6 +3,7 @@ import {
   AppRegistry,
   TouchableOpacity,
   Image,
+  SafeAreaView,
   StyleSheet, // CSS-like styles
   Text, // Renders text
   View // Container component
