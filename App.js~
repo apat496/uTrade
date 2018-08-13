@@ -3,22 +3,19 @@ import {
   Platform,
   StyleSheet,
   Text,
-  SafeAreaView,
+  View,
   StatusBar
 } from "react-native";
 
 import Title from "./app/components/Title"
 import Login from "./app/components/Login";
 import Dashboard from "./app/components/Dashboard";
-import StockSearch from "./app/components/StockSearch";
-import StockSummary from "./app/components/StockSummary";
 import Register from "./app/components/Register";
 import AccountInfo from "./app/components/AccountInfo"
 import Help from "./app/components/Help"
 import CreateLeague from "./app/components/CreateLeague";
 import JoinLeague from "./app/components/JoinLeague";
-import LeagueHome from "./app/components/LeagueHome";
-import PortfolioSummary from "./app/components/PortfolioSummary";
+
 
 import { StackNavigator } from "react-navigation";
 
@@ -32,10 +29,10 @@ class Home extends Component<{}> {
   };
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar backgroundColor="powderblue" />
+      <View style={styles.container}>
+        <StatusBar hidden/>
         <Title navigation={this.props.navigation} />
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -71,6 +68,7 @@ export default App = StackNavigator({
       title: "Dashboard"
     }
   },
+<<<<<<< Updated upstream
   AccountInfo: {
     screen: AccountInfo,
     navigationOptions: {
@@ -81,8 +79,7 @@ export default App = StackNavigator({
     screen: Help,
     navigationOptions: {
       title: "Help"
-    }
-  },
+=======
   JoinLeague: {
     screen: JoinLeague,
     navigationOptions: {
@@ -91,26 +88,9 @@ export default App = StackNavigator({
   },
   CreateLeague:{
     screen: CreateLeague,
-    navigationOptions: {
+    navigationOptions:{
       title: "CreateLeague"
-    }
-  },
-  PortfolioSummary: {
-    screen: PortfolioSummary,
-    navigationOptions: {
-      title: "PortfolioSummary"
-    }
-  },
-  StockSearch: {
-    screen: StockSearch,
-    navigationOptions: {
-      title: "StockSearch"
-    }
-  },
-  LeagueHome: {
-    screen: LeagueHome,
-    navigationOptions: {
-      title: "LeagueHome"
+>>>>>>> Stashed changes
     }
   }
 });

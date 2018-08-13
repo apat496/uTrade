@@ -35,12 +35,13 @@ export default class Login extends Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView behavior="padding" style={styles.container}>
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Log In</Text>
         </View>
-        <KeyboardAvoidingView>
+        <KeyboardAvoidingView behavior="padding"
+                              enabled>
           <TextInput
             value={this.state.email}
             onChangeText={email => this.setState({ email })}
@@ -63,13 +64,13 @@ export default class Login extends Component {
             secureTextEntry
             ref={input => (this.passwordInput = input)}
           />
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={this.onLoginPress.bind(this)}
+          >
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
         </KeyboardAvoidingView>
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={this.onLoginPress.bind(this)}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
       </SafeAreaView>
     );
   }
