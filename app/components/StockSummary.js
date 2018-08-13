@@ -23,6 +23,12 @@ import {
 import NavBar from "./NavBar";
 import Table from "./Table";
 
+import {
+  lookupStock,
+  buyStock,
+  sellStock
+} from "./Fetcher";
+
 export default class StockSearch extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -35,47 +41,17 @@ export default class StockSearch extends Component {
   constructor() {
     super();
     this.state = {
-      ticker: "AAPL",
+      ticker: "",
       stockInfo: {
-        price: "$191.65",
-        open: "$191.65",
-        high: "$192.64",
-        low: "$190.87",
-        volume: "3.85M",
-        average: "29.79M",
-        marketCap: "1000B",
-        historical: [
-          {
-            date: 1,
-            value: 2
-          },
-          {
-            date: 2,
-            value: 3
-          },
-          {
-            date: 3,
-            value: 3
-          },
-          {
-            date: 4,
-            value: 5
-          },
-          {
-            date: 5,
-            value: 4
-          }
-        ],
-        owned: [
-          {
-            leagueName: "Super Fun League 1",
-            quantity: 1
-          },
-          {
-            leagueName: "Super Fun League 2",
-            quantity: 2
-          }
-        ]
+        price: "",
+        dayHigh: "",
+        dayLow: "",
+        monthHigh: "",
+        monthLow: "",
+        yearHigh: "",
+        yearLow: "",
+        historical: [],
+        owned: []
       },
       widths: [
         175,
@@ -84,35 +60,65 @@ export default class StockSearch extends Component {
         50,
         50
       ],
-      bsData: [
-        {
-          leagueName: "Super Fun League 1",
-          quantity: 0
-        },
-        {
-          leagueName: "Super Fun League 2",
-          quantity: 0
-        }
-      ]
+      bsData: []
     }
   }
 
+  componentDidMount() {
+    var ticker = this.props.navigation.getParam("ticker");
+    lookupStock(global.userId, ticker)
+      .then(res => {
+        var stock = res.body;
+        var stockInfo = {
+          price: stock.currentValue,
+          dayHigh: "$" + stock.todaysHigh,
+          dayLow: "$" + stock.todaysLow,
+          monthHigh: "$" + stock.monthHigh,
+          monthLow: "$" + stock.monthLow,
+          yearHigh: "$" + stock.yearHigh,
+          yearLow: "$" + stock.yearLow,
+          historical: stock.yearSummary.reverse().map((value, i) => {
+            return {
+              date: i,
+              value: value
+            }
+          }),
+          owned: global.leagues.map(league => {
+            return {
+              leagueId: league.id,
+              leagueName: league.name,
+              quantity: stock.owned[league.name] || 0
+            }
+          })
+        }
+        var bsData = stockInfo.owned.map(league => {
+          return {
+            leagueId: league.leagueId,
+            leagueName: league.leagueName,
+            quantity: 0
+          }
+        })
+        this.setState({ ticker, stockInfo, bsData });
+      });
+  }
+
   async handleBuyStock(leagueName, quantity) {
-    console.log("Buy");
-    console.log(leagueName);
-    console.log(this.state.ticker);
-    console.log(quantity);
+    var leagueId = this.state.bsData.find(data => data.leagueName === leagueName).leagueId;
+    buyStock(global.userId, leagueId, this.state.ticker, quantity).then(() => this.componentDidMount());
   }
 
   async handleSellStock(leagueName, quantity) {
-    console.log("Sell");
-    console.log(leagueName);
-    console.log(this.state.ticker);
-    console.log(quantity);
+    var leagueId = this.state.bsData.find(data => data.leagueName === leagueName).leagueId;
+    sellStock(global.userId, leagueId, this.state.ticker, quantity).then(() => this.componentDidMount());
   }
 
   renderChart() {
     var stockInfo = this.state.stockInfo;
+    if (stockInfo.historical.length === 0) {
+      return (
+        <View/>
+      )
+    }
     return (
       <VictoryChart theme={VictoryTheme.material}
                     padding={{ top: 5, bottom: 15, left: 50, right: 50 }}
@@ -156,7 +162,7 @@ export default class StockSearch extends Component {
         </View>
         <TextInput
           value={bsData.find(data => data.leagueName === league.leagueName).quantity.toString()}
-          onChangeText={qty => { bsData[league.leagueName] = qty; this.setState({ bsData })}}
+          onChangeText={qty => { bsData.find(data => data.leagueName === league.leagueName).quantity = qty; this.setState({ bsData })}}
           style={[styles.cell, {width: widths[2]}]}
           returnKeyType="go"
           keyboardType="number-pad"
@@ -183,16 +189,16 @@ export default class StockSearch extends Component {
     var stockInfo = this.state.stockInfo;
     var statHeader = ["Stat", "Value", "Stat", "Value"];
     var statContents = [
-      ["OPEN", stockInfo.open, "VOLUME",  stockInfo.volume],
-      ["HIGH", stockInfo.high, "AVG VOL", stockInfo.average],
-      ["LOW",  stockInfo.low,  "MKT CAP", stockInfo.marketCap]
+      ["DayHigh", stockInfo.dayHigh, "DayLow",  stockInfo.dayLow],
+      ["MonthHigh", stockInfo.monthHigh, "MonthLow", stockInfo.monthLow],
+      ["YearHigh",  stockInfo.yearHigh,  "YearLow", stockInfo.yearLow]
     ];
 
     return (
       <SafeAreaView style={styles.container}>
         <NavBar navigation={this.props.navigation}/>
         <Text style={styles.text}>{this.state.ticker}</Text>
-        <Text style={styles.text}>{stockInfo.price}</Text>
+        <Text style={styles.text}>${stockInfo.price}</Text>
         {this.renderChart()}
         <Text style={styles.text}>Stats</Text>
         <Table headerContent={statHeader}

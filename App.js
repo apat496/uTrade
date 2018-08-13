@@ -9,16 +9,16 @@ import {
 
 import Title from "./app/components/Title"
 import Login from "./app/components/Login";
-import Dashboard from "./app/components/Dashboard";
-import StockSearch from "./app/components/StockSearch";
-import StockSummary from "./app/components/StockSummary";
 import Register from "./app/components/Register";
-import AccountInfo from "./app/components/AccountInfo"
-import Help from "./app/components/Help"
-import CreateLeague from "./app/components/CreateLeague";
-import JoinLeague from "./app/components/JoinLeague";
+import Dashboard from "./app/components/Dashboard";
 import LeagueHome from "./app/components/LeagueHome";
 import PortfolioSummary from "./app/components/PortfolioSummary";
+import CreateLeague from "./app/components/CreateLeague";
+import JoinLeague from "./app/components/JoinLeague";
+import StockSearch from "./app/components/StockSearch";
+import StockSummary from "./app/components/StockSummary";
+import AccountInfo from "./app/components/AccountInfo"
+import Help from "./app/components/Help"
 
 import { StackNavigator } from "react-navigation";
 
@@ -71,6 +71,42 @@ export default App = StackNavigator({
       title: "Dashboard"
     }
   },
+  LeagueHome: {
+    screen: LeagueHome,
+    navigationOptions: {
+      title: "LeagueHome"
+    }
+  },
+  PortfolioSummary: {
+    screen: PortfolioSummary,
+    navigationOptions: {
+      title: "PortfolioSummary"
+    }
+  },
+  CreateLeague:{
+    screen: CreateLeague,
+    navigationOptions: {
+      title: "CreateLeague"
+    }
+  },
+  JoinLeague: {
+    screen: JoinLeague,
+    navigationOptions: {
+      title: "JoinLeague"
+    }
+  },
+  StockSearch: {
+    screen: StockSearch,
+    navigationOptions: {
+      title: "StockSearch"
+    }
+  },
+  StockSummary: {
+    screen: StockSummary,
+    navigationOptions: {
+      title: "StockSummary"
+    }
+  },
   AccountInfo: {
     screen: AccountInfo,
     navigationOptions: {
@@ -81,36 +117,6 @@ export default App = StackNavigator({
     screen: Help,
     navigationOptions: {
       title: "Help"
-    }
-  },
-  JoinLeague: {
-    screen: JoinLeague,
-    navigationOptions: {
-      title: "JoinLeague"
-    }
-  },
-  CreateLeague:{
-    screen: CreateLeague,
-    navigationOptions: {
-      title: "CreateLeague"
-    }
-  },
-  PortfolioSummary: {
-    screen: PortfolioSummary,
-    navigationOptions: {
-      title: "PortfolioSummary"
-    }
-  },
-  StockSearch: {
-    screen: StockSearch,
-    navigationOptions: {
-      title: "StockSearch"
-    }
-  },
-  LeagueHome: {
-    screen: LeagueHome,
-    navigationOptions: {
-      title: "LeagueHome"
     }
   }
 });

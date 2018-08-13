@@ -13,6 +13,8 @@ import Autocomplete from "react-native-autocomplete-input";
 
 import NavBar from "./NavBar";
 
+import { getTickers } from "./Fetcher";
+
 export default class StockSearch extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -27,12 +29,20 @@ export default class StockSearch extends Component {
 
     this.state = {
       ticker: "",
-      tickers: ["AAPL", "AMZN", "GOOG", "BRK.B"]
+      tickers: []
     }
   };
 
+  componentDidMount() {
+    getTickers().then(res => {
+      [].push.apply(this.state.tickers, res.body.map(stock => stock.ticker));
+    });
+  }
+
   async onStockSelection(ticker) {
-    this.props.navigation.navigate("Dashboard");
+    this.props.navigation.navigate("StockSummary", {
+      ticker: ticker
+    });
   }
 
   filterTickers(input) {
@@ -41,8 +51,7 @@ export default class StockSearch extends Component {
     }
 
     const { tickers } = this.state;
-    const regex = new RegExp(`${input.trim()}`, 'i');
-    return tickers.filter(ticker => ticker.search(regex) >= 0);
+    return tickers.filter(ticker => ticker.startsWith(input.toUpperCase()));
   }
 
   render() {
@@ -58,7 +67,7 @@ export default class StockSearch extends Component {
           onChangeText={input => this.setState({ ticker: input })}
           renderItem={item => (
             <TouchableOpacity
-              onPress={() => this.onStockSelection(item)}
+              onPress={this.onStockSelection.bind(this, item)}
               style={styles.buttonContainer}>
               <Text style={styles.buttonText}>{item}</Text>
             </TouchableOpacity>

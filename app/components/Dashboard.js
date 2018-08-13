@@ -24,6 +24,12 @@ import {
 import NavBar from "./NavBar";
 import Table from "./Table";
 
+import {
+  getUserLeagues,
+  getLeagueInfo,
+  getTickers
+} from "./Fetcher";
+
 const colors = [
   "red",
   "orange",
@@ -44,58 +50,6 @@ const colors = [
 ]
 
 export default class Dashboard extends Component {
-  constructor() {
-    super();
-    this.state = {
-      username: "",
-      leagues: [
-        {
-          name: "Super Fun League 1",
-          members: [
-            {
-              name: "Player 1",
-              values: [
-                { date: 1, value: 2 },
-                { date: 2, value: 3 },
-                { date: 3, value: 5 },
-                { date: 4, value: 4 },
-                { date: 5, value: 7 }
-              ]
-            },
-            {
-              name: "Player 2",
-              values: [
-                { date: 1, value: 2 },
-                { date: 2, value: 3 },
-                { date: 3, value: 4 },
-                { date: 4, value: 5 },
-                { date: 5, value: 6 }
-              ]
-            }
-          ]
-        }
-      ],
-      winners: [
-        {
-          ticker: "AAPL",
-          price: "$191",
-          delta: "+7.96%"
-        },
-        {
-          ticker: "AMZN",
-          price: "$1813",
-          delta: "+5.45%"
-        }
-      ],
-      losers: [
-        {
-          ticker: "GOOG",
-          price: "$1188",
-          delta: "-10.04%"
-        }
-      ]
-    };
-  }
   static navigationOptions = {
     headerStyle: {
       backgroundColor: "powderblue",
@@ -104,12 +58,58 @@ export default class Dashboard extends Component {
     header: null
   };
 
-  async onPress(button) {
-    this.props.navigation.navigate(button)
+  constructor() {
+    super();
+    this.state = {
+      leagues: [],
+      winners: [],
+      losers: []
+    };
+  }
+
+  componentDidMount() {
+    getUserLeagues(global.userId).then(res => {
+      res.body.forEach(leagueId => {
+        getLeagueInfo(leagueId).then(res2 => {
+          var league = res2.body;
+          this.state.leagues.push({
+            id: leagueId,
+            name: league.leagueName,
+            members: league.members.map(member => {
+              return {
+                name: member[0].username,
+                values: member[1].historicalValue.map((value, i) => {
+                  return {
+                    date: i,
+                    value: value
+                  }
+                })
+              }
+            })
+          });
+          this.forceUpdate();
+        });
+      });
+      global.leagues = this.state.leagues;
+    });
+
+    getTickers().then(res => {
+      var tickers = res.body.map(ticker => {
+        return {
+          ticker: ticker.ticker,
+          price: "$" + ticker.price,
+          delta: ticker.delta + "%"
+        };
+      });
+      [].push.apply(this.state.winners, tickers.slice(0, 10));
+      [].push.apply(this.state.losers, tickers.splice(-10).reverse());
+      this.forceUpdate();
+    });
   }
 
   renderLines(leagueNum) {
     return this.state.leagues[leagueNum].members.map((member, i) => {
+      if(member.values.length === 0) return;
       return(
         <VictoryLine
           style={{
@@ -126,16 +126,27 @@ export default class Dashboard extends Component {
   }
 
   renderSwipes() {
+    if (this.state.leagues.length === 0) {
+      return (
+        <View style={styles.slide}>
+          <Text style={styles.text}>No Leagues Found</Text>
+          <Text style={styles.text}>Join or Create a League</Text>
+        </View>
+      )
+    }
+
     return this.state.leagues.map((league, i) => {
       return(
         <TouchableOpacity
-          onPress={() => this.onPress("LeagueHome")}
+          onPress={() => this.props.navigation.navigate("LeagueHome", {
+            leagueId: leagueId
+          })}
           key={i}
         >
           <View style={styles.slide}>
             <Text style={styles.text}>{league.name}</Text>
             <VictoryChart theme={VictoryTheme.material}
-                          padding={{ top: 5, bottom: 125, left: 50, right: 50 }}>
+                          padding={{ top: 5, bottom: 125, left: 75, right: 50 }}>
               {this.renderLines(i)}
             </VictoryChart>
           </View>
@@ -177,7 +188,7 @@ export default class Dashboard extends Component {
 const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
-    height: window.height,
+    flex: 1,
     backgroundColor: "powderblue"
   },
   wrapper: {
@@ -193,29 +204,6 @@ const styles = StyleSheet.create({
     textShadowColor: "black",
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 5
-  },
-  table: {
-  },
-  row: {
-    flexDirection: "row"
-  },
-  headerRow: {
-    flexDirection: "row",
-    backgroundColor: "dimgray"
-  },
-  column: {
-    flexDirection: "column"
-  },
-  cell: {
-    height: 30,
-    width: window.width / 3,
-    borderColor: "black",
-    borderWidth: 2
-  },
-  cellText: {
-    color: "black",
-    fontSize: 18,
-    fontWeight: "bold"
   }
 });
 

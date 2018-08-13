@@ -8,6 +8,10 @@ import {
 } from "react-native";
 
 export default class Table extends Component {
+  async onPress(index) {
+    this.props.navigation.navigate(this.props.presses[index])
+  }
+
   renderHeader() {
     return this.props.headerContent.map((cell, i) => {
       var width = window.width / this.props.headerContent.length;
@@ -30,40 +34,24 @@ export default class Table extends Component {
     });
   }
 
-/*
   renderContents() {
     return this.props.tableContents.map((row, i) => {
       return (
-        <View key={i} style={styles.row}>
-          {this.renderRow(row)}
-        </View>
+        {
+          ...this.props.presses ?
+          <TouchableOpacity key={i}
+                            style={styles.row}
+                            onPress={this.onPress.bind(this, i)}
+          >
+            {this.renderRow(row)}
+          </TouchableOpacity> :
+          <View key={i} style={styles.row}>
+            {this.renderRow(row)}
+          </View>
+        }
       );
     });
   }
-*/
-
-async onPress(index) {
-  console.log(this.props.presses[index]);
-  this.props.navigation.navigate(this.props.presses[index])
-}
-
-renderContents() {
-  return this.props.tableContents.map((row, i) => {
-    return (
-      <View key={i} style={styles.row}>
-      {this.props.presses ?
-      <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={this.onPress.bind(this, i)}
-        >
-          <Text style={styles.buttonText}>{this.renderRow(row)}</Text>
-        </TouchableOpacity> :
-        <Text style={styles.buttonText}>{this.renderRow(row)}</Text>
-      }
-      </View>
-    );
-  });
-}
 
   render() {
 

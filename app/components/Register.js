@@ -50,9 +50,8 @@ export default class Register extends Component {
     console.log(responseJson);
 
     if (responseJson.status === 204) {
-      this.props.navigation.navigate("Dashboard", {
-        userId: responseJson.userId
-      });
+      global.userId = responseJson.body.userId;
+      this.props.navigation.navigate("Dashboard");
     } else {
       this.setState({ registrationStatus: responseJson.status });
     }
@@ -189,16 +188,3 @@ const styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent("Register", () => Register);
-
-String.prototype.hashCode = function() {
-    var hash = 0;
-    if (this.length == 0) {
-        return hash;
-    }
-    for (var i = 0; i < this.length; i++) {
-        var char = this.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash;
-}

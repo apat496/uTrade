@@ -59,12 +59,15 @@ async function getData(method, body, userId = "", leagueId = "", leagueCode = ""
   var url = apiBaseUrl + methodInfo.path;
 
   url = url.replace("{userId}", userId)
-           .replace("{leagueId}", userId)
+           .replace("{leagueId}", leagueId)
            .replace("{leagueCode}", leagueCode)
            .replace("{ticker}", ticker);
 
   var params =  {
-    method: methodInfo.verb
+    method: methodInfo.verb,
+    headers: {
+      "Content-Type": "application/json"
+    }
   };
 
   if (body) {
@@ -159,17 +162,12 @@ export function sellStock(userId, leagueId, stockTicker, quantity) {
   const body = {
     userId: userId,
     stockTicker: stockTicker,
-    quantity: quantity
+    quantity: parseInt(quantity)
   };
 
   return getData("sellStock", body, "", leagueId);
 }
 
 export function lookupStock(userId, stockTicker) {
-  const body = {
-    userId: userId,
-    stockTicker: stockTicker
-  };
-
-  return getData("lookupStock", body);
+  return getData("lookupStock", null, userId, "", "", stockTicker);
 }

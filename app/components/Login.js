@@ -41,9 +41,8 @@ export default class Login extends Component {
     const responseJson = await authenticate(username, password.hashCode());
 
     if (responseJson.status === 200) {
-      this.props.navigation.navigate("Dashboard", {
-        userId: responseJson.body.userId
-      });
+      global.userId = responseJson.body.userId;
+      this.props.navigation.navigate("Dashboard");
     } else {
       this.setState({authenticationStatus: responseJson.status});
     }
