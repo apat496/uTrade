@@ -18,13 +18,8 @@ import Help from "./app/components/Help"
 import CreateLeague from "./app/components/CreateLeague";
 import JoinLeague from "./app/components/JoinLeague";
 import LeagueHome from "./app/components/LeagueHome";
-<<<<<<< Updated upstream
 import PortfolioSummary from "./app/components/PortfolioSummary";
 
-=======
-
-import PortfolioSummary from "./app/components/PortfolioSummary";
->>>>>>> Stashed changes
 import { StackNavigator } from "react-navigation";
 
 class Home extends Component<{}> {
