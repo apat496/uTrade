@@ -13,8 +13,8 @@ import {
 import NavBar from "./NavBar";
 
 export default class JoinLeague extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       leagueID: ""
     };
@@ -26,7 +26,7 @@ export default class JoinLeague extends Component {
     }
   };
 
-  async onRegisterPress() {
+  async onJoinLeaguePress() {
     const { leagueID} = this.state;
     console.log(leagueID);
     this.props.navigation.navigate("Dashboard");
@@ -40,21 +40,21 @@ export default class JoinLeague extends Component {
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Join a league</Text>
         </View>
-        <KeyboardAvoidingView>
+        <KeyboardAvoidingView behavior="padding"
+                              enabled>
           <TextInput
             value={this.state.leagueID}
-            onChangeText={name => this.setState({ leagueID })}
+            onChangeText={leagueID => this.setState({ leagueID })}
             style={styles.input}
             placeholder="League ID"
             placeholderTextColor="rgba(0,0,0,0.7)"
-            returnKeyType="next"
-            onSubmitEditing={() => this.leagueIDInput.focus()}
+            returnKeyType="go"
           />
 
         </KeyboardAvoidingView>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={this.onRegisterPress.bind(this)}
+          onPress={this.onJoinLeaguePress.bind(this)}
         >
           <Text style={styles.buttonText}>Join a league</Text>
         </TouchableOpacity>

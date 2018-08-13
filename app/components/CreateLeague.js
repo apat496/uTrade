@@ -28,7 +28,7 @@ export default class CreateLeague extends Component {
     }
   };
 
-  async onRegisterPress() {
+  async onCreateLeaguePress() {
     const { name, duration, capital} = this.state;
     console.log(name);
     console.log(duration);
@@ -44,38 +44,42 @@ export default class CreateLeague extends Component {
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Create a League</Text>
         </View>
-        <KeyboardAvoidingView>
+        <KeyboardAvoidingView behavior="padding"
+                              enabled>
           <TextInput
-            value={this.state.leagueID}
+            value={this.state.name}
             onChangeText={name => this.setState({ name })}
             style={styles.input}
             placeholder="League name"
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="next"
-            onSubmitEditing={() => this.nameInput.focus()}
+            ref={input => (this.nameInput = input)}
+            onSubmitEditing={() => this.durationInput.focus()}
           />
           <TextInput
-            value={this.state.leagueID}
-            onChangeText={name => this.setState({ duration })}
+            value={this.state.duration}
+            onChangeText={duration => this.setState({ duration })}
             style={styles.input}
             placeholder="Duration (Weeks)"
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="next"
-            onSubmitEditing={() => this.durationInput.focus()}
+            ref={input => (this.durationInput = input)}
+            onSubmitEditing={() => this.capitalInput.focus()}
           />
           <TextInput
-            value={this.state.leagueID}
-            onChangeText={name => this.setState({ capital })}
+            value={this.state.capital}
+            onChangeText={capital => this.setState({ capital })}
             style={styles.input}
             placeholder="Starting Capital"
             placeholderTextColor="rgba(0,0,0,0.7)"
-            returnKeyType="next"
-            onSubmitEditing={() => this.capitalInput.focus()}
+            ref={input => (this.capitalInput = input)}
+            returnKeyType="go"
+
           />
         </KeyboardAvoidingView>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={this.onRegisterPress.bind(this)}
+          onPress={this.onCreateLeaguePress.bind(this)}
         >
           <Text style={styles.buttonText}>Create a League</Text>
         </TouchableOpacity>
