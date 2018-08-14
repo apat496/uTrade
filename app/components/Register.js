@@ -47,10 +47,8 @@ export default class Register extends Component {
 
     const responseJson = await createUser(email, name, password.hashCode());
 
-    console.log(responseJson);
-
     if (responseJson.status === 204) {
-      global.userId = responseJson.body.userId;
+      global.userId = responseJson.userId;
       this.props.navigation.navigate("Dashboard");
     } else {
       this.setState({ registrationStatus: responseJson.status });

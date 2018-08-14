@@ -10,43 +10,51 @@ import {
   SafeAreaView,
   KeyboardAvoidingView
 } from "react-native";
+
 import NavBar from "./NavBar";
 
+import { joinLeague } from "./Fetcher";
+
 export default class JoinLeague extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      leagueID: ""
-    };
-  }
   static navigationOptions = {
     headerStyle: {
       backgroundColor: "powderblue",
       elevation: null
-    }
+    },
+    header: null
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      leagueCode: "",
+      leagueId: ""
+    };
+  }
+
   async onJoinLeaguePress() {
-    const { leagueID} = this.state;
-    console.log(leagueID);
-    this.props.navigation.navigate("Dashboard");
+    const { leagueCode } = this.state;
+    joinLeague(leagueCode, global.userId)
+      .then(res => this.props.navigation.navigate("LeagueHome", {
+        leagueId: res.body.leagueId
+      }));
   }
 
   render() {
     return (
       <SafeAreaView style={styles.container}>
-      <NavBar navigation={this.props.navigation} />
+        <NavBar navigation={this.props.navigation} />
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
-          <Text style={styles.subtext}>Join a league</Text>
+          <Text style={styles.subtext}>Join League</Text>
         </View>
         <KeyboardAvoidingView behavior="padding"
                               enabled>
           <TextInput
-            value={this.state.leagueID}
-            onChangeText={leagueID => this.setState({ leagueID })}
+            value={this.state.leagueCode}
+            onChangeText={leagueCode => this.setState({ leagueCode })}
             style={styles.input}
-            placeholder="League ID"
+            placeholder="League Code"
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="go"
           />
@@ -56,7 +64,7 @@ export default class JoinLeague extends Component {
           style={styles.buttonContainer}
           onPress={this.onJoinLeaguePress.bind(this)}
         >
-          <Text style={styles.buttonText}>Join a league</Text>
+          <Text style={styles.buttonText}>Join league</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
