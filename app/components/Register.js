@@ -1,18 +1,19 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
   Image,
   KeyboardAvoidingView,
-  SafeAreaView
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 import { createUser } from "./Fetcher";
 
+// Sign Up Page
 export default class Register extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -25,32 +26,42 @@ export default class Register extends Component {
     super(props);
     this.state = {
       email: "",
-      name: "",
+      username: "",
       password: "",
       password_confirmation: "",
       registrationStatus: 200
     };
   }
 
+  // Sign Up Button Handler
   async onRegisterPress() {
-    const { email, password, password_confirmation, name } = this.state;
+    // Get User Input
+    const { username, email, password, password_confirmation } = this.state;
 
-    if (email === "" || name === "" || password === "") {
+    // Check Emptiness
+    if (email === "" || username === "" || password === "") {
       this.setState({ registrationStatus: 100 });
       return;
     }
 
+    // Check Password Confirmation
     if (password !== password_confirmation) {
       this.setState({ registrationStatus: 300 });
       return;
     }
 
-    const responseJson = await createUser(email, name, password.hashCode());
+    // Back End Call to Create User
+    const responseJson = await createUser(email, username, password.hashCode());
 
+    // Check for Good Status
     if (responseJson.status === 204) {
+      // Save UserId for Future Use
       global.userId = responseJson.userId;
+
+      // Redirect to Dashboard
       this.props.navigation.navigate("Dashboard");
     } else {
+      // Save Failure Status for Future Use
       this.setState({ registrationStatus: responseJson.status });
     }
   }
@@ -77,13 +88,15 @@ export default class Register extends Component {
         <KeyboardAvoidingView behavior="padding"
                               enabled>
           <TextInput
-            value={this.state.name}
-            onChangeText={name => this.setState({ name })}
+            value={this.state.username}
+            onChangeText={username => this.setState({ username })}
             style={styles.input}
             placeholder="Username"
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="next"
             onSubmitEditing={() => this.emailInput.focus()}
+            autoCapitalize="none"
+            autoCorrect={false}
           />
           <TextInput
             value={this.state.email}

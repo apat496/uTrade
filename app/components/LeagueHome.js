@@ -1,22 +1,11 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
-  Dimensions,
-  Image,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
-  View,
-  KeyboardAvoidingView,
-  SafeAreaView,
-  TouchableOpacity
+  Text
 } from "react-native";
-
-import NavBar from "./NavBar";
-import Table from "./Table";
-
-import {getLeagueInfo} from "./Fetcher"
 
 import {
   VictoryAxis,
@@ -24,6 +13,11 @@ import {
   VictoryLine,
   VictoryTheme
 } from "victory-native";
+
+import NavBar from "./NavBar";
+import Table from "./Table";
+
+import { getLeagueInfo } from "./Fetcher"
 
 const colors = [
   "red",
@@ -44,33 +38,44 @@ const colors = [
   "dimgray"
 ]
 
+// League Home Page
 export default class LeagueHome extends Component {
-  constructor(){
+  static navigationOptions = {
+    headerStyle: {
+      backgroundColor: "powderblue",
+      elevation: null
+    },
+    header: null
+  };
+
+  constructor() {
     super();
     this.state = {
       username: "",
-      presses : ["PortfolioSummary"],
       league: {
-        members:[],
-        duration: "",
-        currentValue: "",
-        delta: ""
+        id: "",
+        name: "",
+        startingCapital: "",
+        members: []
       }
+    }
   }
-}
 
-  componentDidMount(){
-    //const {userName, email} = this.state
+  // Asynchronous Data Gathering for League States on Load
+  componentDidMount() {
+    // Get League ID from Dashboard Navigation Argument
+    const leagueId = this.props.navigation.getParam("leagueId");
 
-    /* First get the chart info */
-    getLeagueInfo(this.props.navigation.getParam("leagueId")).then(res => {
-      this.setState({
-        league: {
-          presses: ["PortfolioSummary"],
-          duration: res.body.duration,
-          startingCapital: res.body.startingCapital,
-          members: res.body.members.map(member => {
+    // Back End Call to Get League Info for Passed League ID
+    getLeagueInfo(leagueId).then(res => {
+      // Transform Data from Back End to Internal Representation
+      var league = {
+        id: leagueId,
+        name: res.body.leagueName,
+        startingCapital: res.body.startingCapital,
+        members: res.body.members.map(member => {
           return {
+            id: member[0].userId,
             name: member[0].username,
             values: member[1].historicalValue.map((value, i) => {
               return {
@@ -79,22 +84,27 @@ export default class LeagueHome extends Component {
               }
             }),
             currentValue: member[1].currentValue,
-            delta: (parseFloat(member[1].historicalValue.splice(-1)) - parseFloat(res.body.startingCapital)) / parseFloat(res.body.startingCapital)
+            delta: (parseFloat(member[1].historicalValue.splice(-1)) -
+                    parseFloat(res.body.startingCapital)) /
+                    parseFloat(res.body.startingCapital)
           }
         })
       }
-      });
-      this.forceUpdate();
+
+      // Set Internal State for Rendering
+      this.setState({ league })
     });
-    console.log("******");
-    console.log(this.state.league);
-    console.log("******booom goes the dynamite****");}
+  }
 
-
-
+  // Helper Function to Render League Portfolio Histories
   renderLines() {
+    // Get Members for League and Iterate
     return this.state.league.members.map((member, i) => {
-      return(
+      // If Member Has No History, Move On
+      if(member.values.length === 0) return;
+
+      // Render Line
+      return (
         <VictoryLine
           style={{
             data: { stroke: colors[i] },
@@ -109,75 +119,51 @@ export default class LeagueHome extends Component {
     });
   }
 
-  async onPress(index) {
-    this.props.navigation.navigate(this.props.presses[index], {
-      leagueId: this.props.navigation.getParam("leagueId")
-    })
-  }
-
-
   render() {
+    // Prepare User Summary Header
     var tableHeader = ["Player", "Networth", "Delta"];
+
+    // Prepare User Summary Contents
     var leaderboard = this.state.league.members.map(
       (player) => [player.name, player.currentValue, player.delta + "%"]);
 
       return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.text}> hello </Text>
-        <VictoryChart theme={VictoryTheme.material}
-                      padding={{ top: 5, bottom: 125, left: 50, right: 50 }}>
-          {this.renderLines()}
-        </VictoryChart>
-        <Table
-          navigation={this.props.navigation}
-          presses={this.state.presses}
-          headerContent={tableHeader}
-          tableContents={leaderboard}
-        />
-      </SafeAreaView>
+        <SafeAreaView style={styles.container}>
+          <NavBar navigation={this.props.navigation} />
+          <ScrollView contentContainerStyle={styles.container}>
+            <Text style={styles.text}>{this.state.league.name}</Text>
+            <VictoryChart theme={VictoryTheme.material}
+                          padding={{ top: 5, bottom: 10, left: 75, right: 50 }}
+                          height={300}>
+              {this.renderLines()}
+            </VictoryChart>
+            <Table rowPressHandler={rowIndex => this.props.navigation.navigate("PortfolioSummary", {
+                     leagueId: this.state.league.id,
+                     userId: this.state.league.members[rowIndex].id
+                   })}
+                   rowColors={colors}
+                   headerContent={tableHeader}
+                   tableContents={leaderboard}
+            />
+          </ScrollView>
+        </SafeAreaView>
     );
   }
 }
 
-const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
-    height: window.height,
-    backgroundColor: "powderblue"
-  },
-  wrapper: {
-  },
-  slide: {
-    alignItems: "center",
+    flex: 1,
     backgroundColor: "powderblue",
+    alignItems: "center"
   },
   text: {
-    color: "black",
+    color: "white",
     fontSize: 30,
-    fontWeight: "bold"
-  },
-  table: {
-  },
-  row: {
-    flexDirection: "row"
-  },
-  headerRow: {
-    flexDirection: "row",
-    backgroundColor: "dimgray"
-  },
-  column: {
-    flexDirection: "column"
-  },
-  cell: {
-    height: 30,
-    width: window.width / 3,
-    borderColor: "black",
-    borderWidth: 2
-  },
-  cellText: {
-    color: "black",
-    fontSize: 18,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    textShadowColor: "black",
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5
   }
 });
 

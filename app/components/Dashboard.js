@@ -1,18 +1,16 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
-  Dimensions,
-  Image,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   View
 } from "react-native";
-import Swiper from "react-native-swiper";
 
 import ScrollableTabView from "react-native-scrollable-tab-view";
+import Swiper from "react-native-swiper";
 
 import {
   VictoryAxis,
@@ -30,6 +28,7 @@ import {
   getTickers
 } from "./Fetcher";
 
+// Array of Colors for Lines on Swiper Charts
 const colors = [
   "red",
   "orange",
@@ -49,6 +48,7 @@ const colors = [
   "dimgray"
 ]
 
+// Dashboard Page
 export default class Dashboard extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -63,15 +63,21 @@ export default class Dashboard extends Component {
     this.state = {
       leagues: [],
       winners: [],
-      losers: []
+      losers: [],
+      leagueNum: 0
     };
   }
 
+  // Asynchronous Data Gathering for Dashboard States on Load
   componentDidMount() {
+    // Back End Call to Get LeagueIDs for Leagues User is in
     getUserLeagues(global.userId).then(res => {
       res.body.forEach(leagueId => {
+        // Back End Call to Get League Info for Leagues User is in
         getLeagueInfo(leagueId).then(res2 => {
           var league = res2.body;
+
+          // Add League to State for Swiper
           this.state.leagues.push({
             id: leagueId,
             name: league.leagueName,
@@ -87,12 +93,16 @@ export default class Dashboard extends Component {
               }
             })
           });
+          // Save League Objects for Future Use
+          global.leagues = this.state.leagues;
+
+          // Force Render to Render Added League
           this.forceUpdate();
         });
       });
-      global.leagues = this.state.leagues;
     });
 
+    // Backend Call to Get Stocks for Winners and Losers
     getTickers().then(res => {
       var tickers = res.body.map(ticker => {
         return {
@@ -101,16 +111,27 @@ export default class Dashboard extends Component {
           delta: ticker.delta + "%"
         };
       });
+
+      // Populate Winners
       [].push.apply(this.state.winners, tickers.slice(0, 10));
+
+      // Populate Losers
       [].push.apply(this.state.losers, tickers.splice(-10).reverse());
+
+      // Force Render to Render Added Winners and Losers
       this.forceUpdate();
     });
   }
 
+  // Helper Function to Render League Portfolio Histories for Given League
   renderLines(leagueNum) {
+    // Get Members for League and Iterate
     return this.state.leagues[leagueNum].members.map((member, i) => {
+      // If Member Has No History, Move On
       if(member.values.length === 0) return;
-      return(
+
+      // Render Line
+      return (
         <VictoryLine
           style={{
             data: { stroke: colors[i] },
@@ -125,16 +146,9 @@ export default class Dashboard extends Component {
     });
   }
 
+  // Helper Function to Render Swiper Screens for Each League
   renderSwipes() {
-    if (this.state.leagues.length === 0) {
-      return (
-        <View style={styles.slide}>
-          <Text style={styles.text}>No Leagues Found</Text>
-          <Text style={styles.text}>Join or Create a League</Text>
-        </View>
-      )
-    }
-
+    // Get Leagues for User and Iterate
     return this.state.leagues.map((league, i) => {
       return(
         <TouchableOpacity
@@ -156,18 +170,32 @@ export default class Dashboard extends Component {
   }
 
   render() {
+    // Prepare Winners and Losers Header
     var tableHeader = ["Ticker", "Price", "Delta"];
+
+    // Prepare Winners Table Contents
     var winnerContents = this.state.winners.map(
       (winner) => [winner.ticker, winner.price, winner.delta]);
+
+    // Prepare Losers Table Contents
     var loserContents = this.state.losers.map(
       (loser) => [loser.ticker, loser.price, loser.delta]);
 
     return (
       <SafeAreaView style={styles.container}>
         <NavBar navigation={this.props.navigation} />
-        <Swiper style={styles.wrapper}>
-          {this.renderSwipes()}
-        </Swiper>
+        {
+          this.state.leagues.length === 0 ?
+          <View style={styles.slide}>
+            <Text style={styles.text}>No Leagues Found</Text>
+            <Text style={styles.text}>Join or Create a League</Text>
+          </View> :
+          <Swiper style={styles.wrapper}
+                  index={this.state.leagueNum}
+                  onIndexChanged={leagueNum => this.setState({ leagueNum })}>
+            {this.renderSwipes()}
+          </Swiper>
+        }
         <ScrollableTabView>
           <ScrollView tabLabel="Winners">
             <Table headerContent={tableHeader}
@@ -185,7 +213,6 @@ export default class Dashboard extends Component {
   }
 }
 
-const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,

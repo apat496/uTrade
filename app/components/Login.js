@@ -1,18 +1,19 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
+  Image,
+  KeyboardAvoidingView,
+  SafeAreaView,
   StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
-  Image,
-  SafeAreaView,
-  KeyboardAvoidingView
+  View
 } from "react-native";
 
 import { authenticate } from "./Fetcher";
 
+// Login Page
 export default class Login extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -30,20 +31,29 @@ export default class Login extends Component {
     };
   }
 
+  // Log In Button Handler
   async onLoginPress() {
+    // Get User Input
     const { username, password } = this.state;
 
+    // Check Emptiness
     if (username === "" || password === "") {
-      this.setState({ authenticationStatus: 400 });
+      this.setState({ authenticationStatus: 100 });
       return;
     }
 
+    // Backend Call to Authenticate User
     const responseJson = await authenticate(username, password.hashCode());
 
+    // Check for Good Status
     if (responseJson.status === 200) {
+      // Save UserId for Future Use
       global.userId = responseJson.body.userId;
+
+      // Redirect to Dashboard
       this.props.navigation.navigate("Dashboard");
     } else {
+      // Save Failure Status for Future Use
       this.setState({authenticationStatus: responseJson.status});
     }
   }
@@ -54,6 +64,10 @@ export default class Login extends Component {
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Log In</Text>
+          {
+            this.state.authenticationStatus === 100 &&
+            <Text style={styles.failureText}>Input Field is Blank</Text>
+          }
           {
             this.state.authenticationStatus === 400 &&
             <Text style={styles.failureText}>Username not found</Text>
@@ -81,9 +95,9 @@ export default class Login extends Component {
             onChangeText={password => this.setState({ password })}
             style={styles.input}
             placeholder="Password"
+            secureTextEntry={true}
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="go"
-            secureTextEntry
             ref={input => (this.passwordInput = input)}
           />
           <TouchableOpacity
@@ -137,15 +151,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 20
   },
-  keyboard:{
-    margin: 20,
-    padding: 20,
-    alignSelf: "stretch"
-  },
-  buttonContainer: {
-    backgroundColor: "rgba(255,255,255,0.2)",
-    paddingVertical: 15
-  },
   buttonContainer: {
     backgroundColor: "black",
     borderColor: "powderblue",
@@ -160,16 +165,3 @@ const styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent("Login", () => Login);
-
-String.prototype.hashCode = function() {
-    var hash = 0;
-    if (this.length == 0) {
-        return hash;
-    }
-    for (var i = 0; i < this.length; i++) {
-        var char = this.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash;
-}

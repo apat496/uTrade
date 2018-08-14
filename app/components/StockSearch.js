@@ -1,12 +1,10 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
-  TouchableOpacity,
-  Image,
-  StyleSheet, // CSS-like styles
-  Text, // Renders text
-  View, // Container component
-  SafeAreaView
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity
 } from "react-native";
 
 import Autocomplete from "react-native-autocomplete-input";
@@ -15,6 +13,7 @@ import NavBar from "./NavBar";
 
 import { getTickers } from "./Fetcher";
 
+// Stock Search Page
 export default class StockSearch extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -26,25 +25,28 @@ export default class StockSearch extends Component {
 
   constructor() {
     super();
-
     this.state = {
       ticker: "",
       tickers: []
-    }
-  };
+    };
+  }
 
+  // Asynchronous Data Gathering for Stock Search States on Load
   componentDidMount() {
+    // Back End Call to Get All Tickers
     getTickers().then(res => {
       [].push.apply(this.state.tickers, res.body.map(stock => stock.ticker));
     });
   }
 
+  // Button Handler for Stock Selections
   async onStockSelection(ticker) {
     this.props.navigation.navigate("StockSummary", {
       ticker: ticker
     });
   }
 
+  // Filter Function to Filter Tickers on Input
   filterTickers(input) {
     if (input === '') {
       return [];
@@ -55,7 +57,10 @@ export default class StockSearch extends Component {
   }
 
   render() {
+    // Get User Input
     const { ticker } = this.state;
+
+    // Filter Based on Input
     const data = this.filterTickers(ticker);
 
     return (

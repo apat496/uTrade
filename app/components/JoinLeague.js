@@ -1,20 +1,21 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
+  Image,
+  KeyboardAvoidingView,
+  SafeAreaView,
   StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
-  Image,
-  SafeAreaView,
-  KeyboardAvoidingView
+  View
 } from "react-native";
 
 import NavBar from "./NavBar";
 
 import { joinLeague } from "./Fetcher";
 
+// Join League Page
 export default class JoinLeague extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -24,20 +25,38 @@ export default class JoinLeague extends Component {
     header: null
   };
 
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       leagueCode: "",
-      leagueId: ""
+      joinStatus: 200
     };
   }
 
+  // Join League Button Handler
   async onJoinLeaguePress() {
+    // Get User Input
     const { leagueCode } = this.state;
-    joinLeague(leagueCode, global.userId)
-      .then(res => this.props.navigation.navigate("LeagueHome", {
+
+    // Check Emptiness
+    if (leagueCode === "") {
+      this.setState({ joinStatus: 100 });
+      return;
+    }
+
+    // Back End Call to Join League
+    const responseJson = await joinLeague(leagueCode, global.userId);
+
+    // Check for Good Status
+    if (responseJson.status === 200) {
+      // Redirect to League Home
+      this.props.navigation.navigate("LeagueHome", {
         leagueId: res.body.leagueId
-      }));
+      });
+    } else {
+      // Save Failure Status for Future Use
+      this.setState({ joinStatus: responseJson.status });
+    }
   }
 
   render() {
@@ -77,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: "powderblue"
   },
   logoContainer: {
-    alignItems: "top",
+    alignItems: "center",
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center"
@@ -96,7 +115,7 @@ const styles = StyleSheet.create({
   },
   subtext: {
     color: "black",
-    width: 300,
+    width: 350,
     textAlign: "center",
     fontSize: 40,
     fontWeight: "bold",

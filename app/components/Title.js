@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
-  TouchableOpacity,
   Image,
   SafeAreaView,
   StyleSheet, // CSS-like styles
-  Text, // Renders text
-  View // Container component
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 
+// Title Page
 export default class Title extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -18,35 +19,35 @@ export default class Title extends Component {
     header: null
   };
 
+  // Login Button Handler
   async onLoginPress() {
     this.props.navigation.navigate("Login");
   }
 
+  // Sign Up Button Handler
   async onSignUpPress() {
     this.props.navigation.navigate("Register");
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <View behavior="padding" style={styles.container}>
-          <View style={styles.logoContainer}>
-            <Image style={styles.logo} source={require("./utrade.png")} />
-          </View>
-          <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={this.onSignUpPress.bind(this)}
-          >
-            <Text style={styles.buttonText}>SIGN UP</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={this.onLoginPress.bind(this)}
-          >
-            <Text style={styles.buttonText}>LOGIN</Text>
-          </TouchableOpacity>
+      <SafeAreaView behavior="padding" style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image style={styles.logo} source={require("./utrade.png")} />
         </View>
-      </View>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={this.onSignUpPress.bind(this)}
+        >
+          <Text style={styles.buttonText}>SIGN UP</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={this.onLoginPress.bind(this)}
+        >
+          <Text style={styles.buttonText}>LOGIN</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
     );
   }
 }

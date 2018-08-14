@@ -1,22 +1,25 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
+  Dimensions,
   Image,
-  SafeAreaView,
   KeyboardAvoidingView,
   Modal,
-  Dimensions
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
+
+import DatePicker from "react-native-datepicker";
 
 import NavBar from "./NavBar";
 
 import { createLeague } from "./Fetcher";
 
+// Create League Page
 export default class CreateLeague extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -35,27 +38,44 @@ export default class CreateLeague extends Component {
       startDate: "",
       leagueCode: "",
       leagueId: "",
-      modal: false
+      modal: false,
+      createStatus: 200
     };
   }
 
+  // Create League Button Handler
   async onCreateLeaguePress() {
+    // Get User Input
     const { name, startDate, duration, capital } = this.state;
-    createLeague(name, duration, capital, startDate, global.userId)
-      .then(res => this.setState({
-        leagueCode: res.body.leagueCode,
-        leagueId: res.body.leagueId,
+
+    // Check Emptiness
+    if (name === "" || startDate === "" || duration === "" || capital === "") {
+      this.setState({ createStatus: 100 });
+      return;
+    }
+
+    // Back End Call to Create League
+    const responseJson = await createLeague(name, duration, capital, startDate, global.userId);
+
+    // Check for Good Status
+    if (responseJson.status === 200) {
+      // Set State Variables for Popup Modal
+      this.setState({
+        leagueCode: responseJson.body.leagueCode,
+        leagueId: responseJson.body.leagueId,
         modal: true
-      }));
+      });
+    } else {
+      // Save Failure Status for Future Use
+      this.setState({ createStatus: responseJson.status })
+    }
   }
 
   render() {
     return (
       <SafeAreaView style={styles.container}>
         <Modal transparent={true}
-               visible={this.state.modal}
-               onRequestClose={() => this.props.navigation.navigate("Dashboard")}
-              >
+               visible={this.state.modal}>
           <View style={styles.modal}>
               <Text style={styles.modaltext}>{this.state.name + " Successfully Created!"}</Text>
               <Text style={styles.modaltext}>Use Code Below to Share League with Friends</Text>
@@ -77,6 +97,10 @@ export default class CreateLeague extends Component {
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Create League</Text>
+          {
+            this.state.registrationStatus === 100 &&
+            <Text style={styles.failureText}>Input Field is Blank</Text>
+          }
         </View>
         <KeyboardAvoidingView behavior="padding"
                               enabled>
@@ -90,15 +114,22 @@ export default class CreateLeague extends Component {
             ref={input => (this.nameInput = input)}
             onSubmitEditing={() => this.startDateInput.focus()}
           />
-          <TextInput
-            value={this.state.startDate}
-            onChangeText={startDate => this.setState({ startDate })}
-            style={styles.input}
+          <DatePicker
+            style={styles.dateInput}
+            date={this.state.startDate}
+            mode="date"
             placeholder="Start Date"
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            returnKeyType="next"
-            ref={input => (this.startDateInput = input)}
-            onSubmitEditing={() => this.durationInput.focus()}
+            format="YYYY-MM-DD"
+            minDate="2018-08-14"
+            maxDate="2018-09-01"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            onDateChange={startDate => this.setState({ startDate })}
+            customStyles={{
+              placeholderText: {
+                color: "black"
+              }
+            }}
           />
           <TextInput
             value={this.state.duration}
@@ -107,6 +138,7 @@ export default class CreateLeague extends Component {
             placeholder="Duration (Weeks)"
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="next"
+            keyboardType="number-pad"
             ref={input => (this.durationInput = input)}
             onSubmitEditing={() => this.capitalInput.focus()}
           />
@@ -117,6 +149,7 @@ export default class CreateLeague extends Component {
             placeholder="Starting Capital"
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="go"
+            keyboardType="number-pad"
             ref={input => (this.capitalInput = input)}
           />
         </KeyboardAvoidingView>
@@ -171,9 +204,15 @@ const styles = StyleSheet.create({
     color: "black",
     paddingHorizontal: 10
   },
+  dateInput: {
+    height: 40,
+    width: 350,
+    marginBottom: 10,
+    paddingHorizontal: 10
+  },
   subtext: {
     color: "black",
-    width: 160,
+    width: 350,
     textAlign: "center",
     fontSize: 40,
     fontWeight: "bold",

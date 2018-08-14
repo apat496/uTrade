@@ -2,13 +2,12 @@ import React, { Component } from "react";
 import {
   AppRegistry,
   Dimensions,
-  TouchableOpacity,
-  Image,
-  StyleSheet, // CSS-like styles
-  Text, // Renders text
+  SafeAreaView,
+  StyleSheet,
+  Text,
   TextInput,
-  View, // Container component
-  SafeAreaView
+  TouchableOpacity,
+  View
 } from "react-native";
 
 import Autocomplete from "react-native-autocomplete-input";
@@ -29,7 +28,7 @@ import {
   sellStock
 } from "./Fetcher";
 
-export default class StockSearch extends Component {
+export default class StockSummary extends Component {
   static navigationOptions = {
     headerStyle: {
       backgroundColor: "powderblue",
@@ -53,19 +52,16 @@ export default class StockSearch extends Component {
         historical: [],
         owned: []
       },
-      widths: [
-        175,
-        50,
-        50,
-        50,
-        50
-      ],
       bsData: []
     }
   }
 
+  // Asynchronous Data Gathering for Stock Summary States on Load
   componentDidMount() {
+    // Get Ticker from Stock Search Navigation Argument
     var ticker = this.props.navigation.getParam("ticker");
+
+    // Back End Call to Lookup Given Stock
     lookupStock(global.userId, ticker)
       .then(res => {
         var stock = res.body;
@@ -102,18 +98,27 @@ export default class StockSearch extends Component {
       });
   }
 
+  // Button Handler for Buy Stock
   async handleBuyStock(leagueName, quantity) {
     var leagueId = this.state.bsData.find(data => data.leagueName === leagueName).leagueId;
+
+    // Back End Call to Buy a Stock
     buyStock(global.userId, leagueId, this.state.ticker, quantity).then(() => this.componentDidMount());
   }
 
+  // Button Handler for Sell Stock
   async handleSellStock(leagueName, quantity) {
     var leagueId = this.state.bsData.find(data => data.leagueName === leagueName).leagueId;
+
+    // Back End Call to Sell a Stock
     sellStock(global.userId, leagueId, this.state.ticker, quantity).then(() => this.componentDidMount());
   }
 
+  // Helper Function to Render Historical Data Chart
   renderChart() {
     var stockInfo = this.state.stockInfo;
+
+    // Ignore No Historical Data
     if (stockInfo.historical.length === 0) {
       return (
         <View/>
@@ -135,9 +140,12 @@ export default class StockSearch extends Component {
     );
   }
 
+  // Helper Function to Render Header of Buy/Sell Table
   renderBSHeader() {
+    // Predefined Widths for Page Fill
     var widths = [ 0.43, 0.1575, 0.1375, 0.1375, 0.1375 ].map(i => window.width * i);
 
+    // Render Cells
     return ["League", "Owned", "Qty", "Buy", "Sell"].map((cell, i) => {
       return (
         <View key={i} style={[styles.cell, {width: widths[i]}]}>
@@ -147,6 +155,7 @@ export default class StockSearch extends Component {
     });
   }
 
+  // Helper Function to Render Contents of Buy/Sell Table
   renderBSContents() {
     var owned = this.state.stockInfo.owned;
     var bsData = this.state.bsData;
@@ -221,13 +230,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "powderblue",
-    height: window.height
+    alignItems: "center"
   },
   text: {
-    textAlign: "center",
-    color: "black",
+    color: "white",
     fontSize: 30,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    textShadowColor: "black",
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5
   },
   row: {
     flexDirection: "row"
@@ -241,14 +252,12 @@ const styles = StyleSheet.create({
   },
   cell: {
     height: 30,
-    justifyContent: "center",
     borderColor: "black",
     borderWidth: 2
   },
   cellText: {
-    textAlign: "center",
     color: "black",
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "bold"
   }
 });

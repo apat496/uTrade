@@ -1,12 +1,10 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
-  Dimensions,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
-  SafeAreaView,
-  View
+  Text
 } from "react-native";
 
 import ScrollableTabView from "react-native-scrollable-tab-view";
@@ -28,25 +26,7 @@ import {
   getTickers
 } from "./Fetcher";
 
-const colors = [
-  "red",
-  "orange",
-  "yellow",
-  "green",
-  "blue",
-  "indigo",
-  "violet",
-  "pink",
-  "gray",
-  "darkred",
-  "darkorange",
-  "darkgreen",
-  "darkblue",
-  "darkviolet",
-  "darkmagenta",
-  "dimgray"
-]
-
+// Portfolio Summary Page
 export default class PortfolioSummary extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -69,10 +49,20 @@ export default class PortfolioSummary extends Component {
     }
   }
 
+  // Asynchronous Data Gathering for Portfolio States on Load
   componentDidMount() {
-    getUserInfo("1").then(res => this.setState({ username: res.username }));
-    getLeagueInfo("2").then(res => this.setState({ leagueName: res.body.leagueName }));
-    getPortfolio("1", "2").then(res => {console.log(res); this.setState({
+    // Get League and User IDs from League Home Navigation Argument
+    var leagueId = this.props.navigation.getParam("leagueId");
+    var userId = this.props.navigation.getParam("userId");
+
+    // Back End Call to Get User Info for Passed User ID
+    getUserInfo(userId).then(res => this.setState({ username: res.username }));
+
+    // Get League Name From Local Cache
+    this.setState({ leagueName: global.leagues.find(league => league.id === leagueId).name });
+
+    // Back End Call to Get Portfolio Info for Passes IDs
+    getPortfolio(userId, leagueId).then(res => this.setState({
       currentValue: Math.round(res.body.currentValue * 100) / 100,
       historicalData: res.body.historicalValue.map((val, i) => {
         return {
@@ -81,17 +71,9 @@ export default class PortfolioSummary extends Component {
         }
       }),
       holdings: res.body.holdings.map(holding => holding.ticker)
-    })});
+    }));
 
-    textColor = function(colorIndex) {
-      return{
-        color: colors[colorIndex],
-        fontSize: 24,
-        fontWeight: "bold",
-        textAlign: "center"
-      }
-    }
-
+    // Backend Call to Get Stocks for Winners and Losers
     getTickers().then(res => {
       var tickers = res.body.map(ticker => {
         return {
@@ -100,17 +82,28 @@ export default class PortfolioSummary extends Component {
           delta: ticker.delta + "%"
         };
       });
+
+      // Populate Winners
       [].push.apply(this.state.winners, tickers);
+
+      // Populate Losers
       [].push.apply(this.state.losers, tickers.reverse());
+
+      // Force Render to Render Added Winners and Losers
       this.forceUpdate();
     });
   }
 
   render() {
+    // Prepare Winners and Losers Header
     var tableHeader = ["Ticker", "Price", "Delta"];
+
+    // Prepare Winners Table Contents
     var winnerContents = this.state.winners.filter(winner => this.state.holdings.includes(winner.ticker))
                                            .map(winner => [winner.ticker, winner.price, winner.delta])
                                            .slice(0, 10);
+
+    // Prepare Losers Table Contents
     var loserContents = this.state.losers.filter(loser => this.state.holdings.includes(loser.ticker))
                                          .map(loser => [loser.ticker, loser.price, loser.delta])
                                          .splice(-10);
@@ -119,12 +112,13 @@ export default class PortfolioSummary extends Component {
       <SafeAreaView style={styles.container}>
         <NavBar navigation={this.props.navigation} />
         <Text style={styles.text}>{this.state.leagueName}</Text>
-        <Text style={this.textColor()}>{this.state.username + "'s Portfolio"}</Text>
+        <Text style={styles.text}>{this.state.username + "'s Portfolio"}</Text>
         <Text style={styles.text}>(${this.state.currentValue})</Text>
         {
           this.state.historicalData.length &&
           <VictoryChart theme={VictoryTheme.material}
-                       padding={{ top: 10, bottom: 150, left: 75, right: 50 }}>
+                        padding={{ top: 10, bottom: 10, left: 75, right: 50 }}
+                        height={200}>
             <VictoryLine style={{
                            data: { stroke: "black" },
                            parent: { border: "1px solid #ccc"}
@@ -155,13 +149,16 @@ export default class PortfolioSummary extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "powderblue"
+    backgroundColor: "powderblue",
+    alignItems: "center"
   },
   text: {
-    color: "black",
-    fontSize: 24,
+    color: "white",
+    fontSize: 30,
     fontWeight: "bold",
-    textAlign: "center"
+    textShadowColor: "black",
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5
   }
 });
 

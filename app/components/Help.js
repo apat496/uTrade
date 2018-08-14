@@ -1,14 +1,10 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
-  Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
-  KeyboardAvoidingView,
   SafeAreaView,
   TouchableOpacity
 } from "react-native";
@@ -17,16 +13,25 @@ import { Video } from 'expo';
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 
 import NavBar from "./NavBar";
-//import Video from 'react-native-video';
-//import TestVideoOne from "../../assets/TestVideoOne.mp4";
 
+// Help Page
 export default class Help extends Component {
-
-  state = {
-    muteOne: false,
-    muteTwo: false,
-    shouldPlayOne: true,
-    shouldPlayTwo: false
+  static navigationOptions = {
+    headerStyle: {
+      backgroundColor: "powderblue",
+      elevation: null
+    },
+    header: null
+  };
+  
+  constructor() {
+    super();
+    this.state = {
+      muteOne: false,
+      muteTwo: false,
+      shouldPlayOne: false,
+      shouldPlayTwo: false
+    }
   }
 
   handlePlayAndPauseOne = () => {
@@ -54,7 +59,6 @@ export default class Help extends Component {
   }
 
   render(){
-    const { width } = Dimensions.get("window");
     return(
       <SafeAreaView style={styles.container}>
         <NavBar navigation={this.props.navigation} />
@@ -107,7 +111,6 @@ export default class Help extends Component {
   }
 }
 
-const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,

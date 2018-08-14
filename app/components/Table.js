@@ -8,10 +8,6 @@ import {
 } from "react-native";
 
 export default class Table extends Component {
-  async onPress(index) {
-    this.props.navigation.navigate(this.props.presses[index])
-  }
-
   renderHeader() {
     return this.props.headerContent.map((cell, i) => {
       var width = window.width / this.props.headerContent.length;
@@ -23,12 +19,13 @@ export default class Table extends Component {
     });
   }
 
-  renderRow(row) {
+  renderRow(row, rowNum) {
+    var width = window.width / row.length;
+    var color = this.props.rowColors ? this.props.rowColors[rowNum] : "black";
     return row.map((cell, i) => {
-      var width = window.width / row.length;
       return (
         <View key={i} style={[styles.cell, {width: width}]}>
-          <Text style={styles.cellText}>{cell}</Text>
+          <Text style={[styles.cellText], {color}}>{cell}</Text>
         </View>
       );
     });
@@ -38,15 +35,15 @@ export default class Table extends Component {
     return this.props.tableContents.map((row, i) => {
       return (
         {
-          ...this.props.presses ?
+          ...this.props.rowPressHandler ?
           <TouchableOpacity key={i}
                             style={styles.row}
-                            onPress={this.onPress.bind(this, i)}
+                            onPress={() => this.props.rowPressHandler(i)}
           >
-            {this.renderRow(row)}
+            {this.renderRow(row, i)}
           </TouchableOpacity> :
           <View key={i} style={styles.row}>
-            {this.renderRow(row)}
+            {this.renderRow(row, i)}
           </View>
         }
       );
@@ -54,7 +51,6 @@ export default class Table extends Component {
   }
 
   render() {
-
     return (
       <View style={styles.column}>
         <View style={styles.headerRow}>

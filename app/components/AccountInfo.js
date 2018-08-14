@@ -21,6 +21,13 @@ import NavBar from "./NavBar";
 import { changePassword, getUserInfo } from "./Fetcher";
 
 export default class AccountInfo extends Component {
+  static navigationOptions = {
+    headerStyle: {
+      backgroundColor: "powderblue",
+      elevation: null
+    },
+    header: null
+  };
 
   constructor() {
     super();
@@ -36,8 +43,7 @@ export default class AccountInfo extends Component {
   }
 
   componentDidMount(){
-    const {userName, email} = this.state
-    const responseJson = getUserInfo(11).then(obj => this.setState({
+    const responseJson = getUserInfo(global.userId).then(obj => this.setState({
       userName: obj.username,
       email: obj.email
     })
@@ -45,25 +51,22 @@ export default class AccountInfo extends Component {
   }
 
   async onChangePassword() {
-    const {oldPassword, newPassword, confirmNewPassword } = this.state;
+    const { oldPassword, newPassword, confirmNewPassword } = this.state;
 
     /* Test for empty passwords */
     if (oldPassword === "" || newPassword === "") {
-      consolte.log("empty");
-      this.setState({ authenticationStatus: 400 });
+      this.setState({ authenticationStatus: 100 });
       return;
     }
 
     /* Check if they match */
     if (newPassword !== confirmNewPassword) {
-      console.log("wrongpass");
       this.setState({ authenticationStatus: 400});
       return;
     }
 
-    const responseJson = await changePassword("11", oldPassword.hashCode(), newPassword.hashCode());
+    const responseJson = await changePassword(global.userId, oldPassword.hashCode(), newPassword.hashCode());
 
-    console.log(responseJson);
     if (responseJson.status === 204) {
       this.props.navigation.navigate("Dashboard");
     } else {
@@ -128,7 +131,10 @@ export default class AccountInfo extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.buttonContainer}
-            onPress={this.onChangePassword.bind(this)}
+            onPress={() => {
+              global.userId = 0;
+              this.props.navigation.navigate("Title");
+            }}
           >
             <Text style={styles.buttonText}> Log Out </Text>
           </TouchableOpacity>
@@ -207,20 +213,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontWeight: "700"
+  },
+  failureText: {
+    color: "red",
+    width: 160,
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 20
   }
 });
 
 AppRegistry.registerComponent("AccountInfo", () => AccountInfo);
-
-String.prototype.hashCode = function() {
-    var hash = 0;
-    if (this.length == 0) {
-        return hash;
-    }
-    for (var i = 0; i < this.length; i++) {
-        var char = this.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash;
-}

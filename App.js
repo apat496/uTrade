@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import {
-  Platform,
   StyleSheet,
-  Text,
   SafeAreaView,
   StatusBar
 } from "react-native";
+
+import { StackNavigator } from "react-navigation";
 
 import Title from "./app/components/Title"
 import Login from "./app/components/Login";
@@ -19,7 +19,6 @@ import StockSearch from "./app/components/StockSearch";
 import StockSummary from "./app/components/StockSummary";
 import AccountInfo from "./app/components/AccountInfo"
 import Help from "./app/components/Help"
-import { StackNavigator } from "react-navigation";
 
 class Home extends Component<{}> {
   static navigationOptions = {
@@ -122,6 +121,20 @@ export default App = StackNavigator({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: "powderblue"
   }
 });
+
+String.prototype.hashCode = function() {
+    var hash = 0;
+    if (this.length == 0) {
+        return hash;
+    }
+    for (var i = 0; i < this.length; i++) {
+        var char = this.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}
