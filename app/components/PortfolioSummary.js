@@ -2,18 +2,13 @@ import React, { Component } from "react";
 import {
   AppRegistry,
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
-  View,
-  KeyboardAvoidingView,
-  TouchableOpacity
+  SafeAreaView,
+  View
 } from "react-native";
 
-import NavBar from "./NavBar";
-import Table from "./Table";
 import ScrollableTabView from "react-native-scrollable-tab-view";
 
 import {
@@ -23,78 +18,17 @@ import {
   VictoryTheme
 } from "victory-native";
 
-const colors = [
-  "red",
-  "orange",
-  "yellow",
-  "green",
-  "blue",
-  "indigo",
-  "violet",
-  "pink",
-  "gray",
-  "darkred",
-  "darkorange",
-  "darkgreen",
-  "darkblue",
-  "darkviolet",
-  "darkmagenta",
-  "dimgray"
-]
+import NavBar from "./NavBar";
+import Table from "./Table";
+
+import {
+  getPortfolio,
+  getUserInfo,
+  getLeagueInfo,
+  getTickers
+} from "./Fetcher";
 
 export default class PortfolioSummary extends Component {
-  constructor() {
-    super();
-    this.state = {
-      username: "",
-      league:
-        {
-          name: "Super Fun League 1",
-          members: [
-            {
-              name: "Player 1",
-              values: [
-                { date: 1, value: 2 },
-                { date: 2, value: 3 },
-                { date: 3, value: 5 },
-                { date: 4, value: 4 },
-                { date: 5, value: 7 }
-              ]
-            },
-            {
-              name: "Player 2",
-              values: [
-                { date: 1, value: 2 },
-                { date: 2, value: 3 },
-                { date: 3, value: 4 },
-                { date: 4, value: 5 },
-                { date: 5, value: 6 }
-              ]
-            }
-          ]
-        }
-      ,
-      winners: [
-        {
-          ticker: "AAPL",
-          price: "$191",
-          delta: "+7.96%"
-        },
-        {
-          ticker: "AMZN",
-          price: "$1813",
-          delta: "+5.45%"
-        }
-      ],
-      losers: [
-        {
-          ticker: "GOOG",
-          price: "$1188",
-          delta: "-10.04%"
-        }
-      ]
-    };
-  }
   static navigationOptions = {
     headerStyle: {
       backgroundColor: "powderblue",
@@ -103,39 +37,76 @@ export default class PortfolioSummary extends Component {
     header: null
   };
 
-  renderLines() {
-    return this.state.league.members.map((member, i) => {
-      return(
-        <VictoryLine
-          style={{
-            data: { stroke: colors[i] },
-            parent: { border: "1px solid #ccc"}
-          }}
-          data={member.values}
-          x="date"
-          y="value"
-          key={i}
-        />
-      );
+  constructor() {
+    super();
+    this.state = {
+      username: "",
+      leagueName: "",
+      currentValue: "",
+      historicalData: [],
+      holdings: [],
+      winners: [],
+      losers: []
+    }
+  }
+
+  componentDidMount() {
+    getUserInfo("1").then(res => this.setState({ username: res.username }));
+    getLeagueInfo("2").then(res => this.setState({ leagueName: res.body.leagueName }));
+    getPortfolio("1", "2").then(res => {console.log(res); this.setState({
+      currentValue: Math.round(res.body.currentValue * 100) / 100,
+      historicalData: res.body.historicalValue.map((val, i) => {
+        return {
+          date: i,
+          value: val
+        }
+      }),
+      holdings: res.body.holdings.map(holding => holding.ticker)
+    })});
+
+    getTickers().then(res => {
+      var tickers = res.body.map(ticker => {
+        return {
+          ticker: ticker.ticker,
+          price: "$" + ticker.price,
+          delta: ticker.delta + "%"
+        };
+      });
+      [].push.apply(this.state.winners, tickers);
+      [].push.apply(this.state.losers, tickers.reverse());
+      this.forceUpdate();
     });
   }
 
   render() {
     var tableHeader = ["Ticker", "Price", "Delta"];
-    var winnerContents = this.state.winners.map(
-      (winner) => [winner.ticker, winner.price, winner.delta]);
-    var loserContents = this.state.losers.map(
-      (loser) => [loser.ticker, loser.price, loser.delta]);
+    var winnerContents = this.state.winners.filter(winner => this.state.holdings.includes(winner.ticker))
+                                           .map(winner => [winner.ticker, winner.price, winner.delta])
+                                           .slice(0, 10);
+    var loserContents = this.state.losers.filter(loser => this.state.holdings.includes(loser.ticker))
+                                         .map(loser => [loser.ticker, loser.price, loser.delta])
+                                         .splice(-10);
 
     return (
-      <View behavior="padding" style={styles.container}>
-      <NavBar navigation={this.props.navigation} />
-      <Text style={styles.text}> Your Portfolio </Text>
-     <VictoryChart theme={VictoryTheme.material}
-                   padding={{ top: 10, bottom: 125, left: 50, right: 50 }}>
-       {this.renderLines()}
-     </VictoryChart>
-
+      <SafeAreaView style={styles.container}>
+        <NavBar navigation={this.props.navigation} />
+        <Text style={styles.text}>{this.state.leagueName}</Text>
+        <Text style={styles.text}>{this.state.username + "'s Portfolio"}</Text>
+        <Text style={styles.text}>(${this.state.currentValue})</Text>
+        {
+          this.state.historicalData.length &&
+          <VictoryChart theme={VictoryTheme.material}
+                       padding={{ top: 10, bottom: 150, left: 75, right: 50 }}>
+            <VictoryLine style={{
+                           data: { stroke: "black" },
+                           parent: { border: "1px solid #ccc"}
+                         }}
+                         data={this.state.historicalData}
+                         x="date"
+                         y="value"
+            />
+          </VictoryChart>
+        }
         <ScrollableTabView>
           <ScrollView tabLabel="Winners">
             <Table headerContent={tableHeader}
@@ -148,49 +119,21 @@ export default class PortfolioSummary extends Component {
             />
           </ScrollView>
         </ScrollableTabView>
-      </View>
+      </SafeAreaView>
     );
+  }
 }
-}
-const window = Dimensions.get("window");
+
 const styles = StyleSheet.create({
   container: {
-    height: window.height,
+    flex: 1,
     backgroundColor: "powderblue"
-  },
-  wrapper: {
-  },
-  slide: {
-    alignItems: "center",
-    backgroundColor: "powderblue",
   },
   text: {
     color: "black",
-    fontSize: 30,
-    fontWeight: "bold"
-  },
-  table: {
-  },
-  row: {
-    flexDirection: "row"
-  },
-  headerRow: {
-    flexDirection: "row",
-    backgroundColor: "dimgray"
-  },
-  column: {
-    flexDirection: "column"
-  },
-  cell: {
-    height: 30,
-    width: window.width / 3,
-    borderColor: "black",
-    borderWidth: 2
-  },
-  cellText: {
-    color: "black",
-    fontSize: 18,
-    fontWeight: "bold"
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center"
   }
 });
 
