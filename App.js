@@ -19,7 +19,6 @@ import StockSearch from "./app/components/StockSearch";
 import StockSummary from "./app/components/StockSummary";
 import AccountInfo from "./app/components/AccountInfo"
 import Help from "./app/components/Help"
-
 import { StackNavigator } from "react-navigation";
 
 class Home extends Component<{}> {

@@ -28,6 +28,25 @@ import {
   getTickers
 } from "./Fetcher";
 
+const colors = [
+  "red",
+  "orange",
+  "yellow",
+  "green",
+  "blue",
+  "indigo",
+  "violet",
+  "pink",
+  "gray",
+  "darkred",
+  "darkorange",
+  "darkgreen",
+  "darkblue",
+  "darkviolet",
+  "darkmagenta",
+  "dimgray"
+]
+
 export default class PortfolioSummary extends Component {
   static navigationOptions = {
     headerStyle: {
@@ -64,6 +83,15 @@ export default class PortfolioSummary extends Component {
       holdings: res.body.holdings.map(holding => holding.ticker)
     })});
 
+    textColor = function(colorIndex) {
+      return{
+        color: colors[colorIndex],
+        fontSize: 24,
+        fontWeight: "bold",
+        textAlign: "center"
+      }
+    }
+
     getTickers().then(res => {
       var tickers = res.body.map(ticker => {
         return {
@@ -91,7 +119,7 @@ export default class PortfolioSummary extends Component {
       <SafeAreaView style={styles.container}>
         <NavBar navigation={this.props.navigation} />
         <Text style={styles.text}>{this.state.leagueName}</Text>
-        <Text style={styles.text}>{this.state.username + "'s Portfolio"}</Text>
+        <Text style={this.textColor()}>{this.state.username + "'s Portfolio"}</Text>
         <Text style={styles.text}>(${this.state.currentValue})</Text>
         {
           this.state.historicalData.length &&

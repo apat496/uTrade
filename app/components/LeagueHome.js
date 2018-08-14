@@ -16,6 +16,8 @@ import {
 import NavBar from "./NavBar";
 import Table from "./Table";
 
+import {getLeagueInfo} from "./Fetcher"
+
 import {
   VictoryAxis,
   VictoryChart,
@@ -47,55 +49,49 @@ export default class LeagueHome extends Component {
     super();
     this.state = {
       username: "",
-      presses : [
-        "Dashboard",
-        "Login"
-      ],
-      league:
-      {
-        name: "Super Fun League Name here",
-        members: [
-          {
-            name: "Player 1",
-            capital: "20",
-            delta: "+4.23%",
-            values: [
-              { date: 1, value: 2 },
-              { date: 2, value: 3 },
-              { date: 3, value: 5 },
-              { date: 4, value: 4 },
-              { date: 5, value: 7 }
-            ]
-          },
-          {
-            name: "Player 2",
-            capital: "1000",
-            delta: "-94.23%",
-            values: [
-              { date: 1, value: 2 },
-              { date: 2, value: 3 },
-              { date: 3, value: 4 },
-              { date: 4, value: 5 },
-              { date: 5, value: 6 }
-            ]
-          }
-        ],
-
-        winners: [
-          {
-            ticker: "AAPL",
-            price: "$191",
-            delta: "+7.96%"
-          },
-          {
-            ticker: "AMZN",
-            price: "$1813",
-            delta: "+5.45%"
-          }
-        ],
+      presses : ["PortfolioSummary"],
+      league: {
+        members:[],
+        duration: "",
+        currentValue: "",
+        delta: ""
       }
-    }
   }
+}
+
+  componentDidMount(){
+    //const {userName, email} = this.state
+
+    /* First get the chart info */
+    getLeagueInfo(this.props.navigation.getParam("leagueId")).then(res => {
+      this.setState({
+        league: {
+          presses: ["PortfolioSummary"],
+          duration: res.body.duration,
+          startingCapital: res.body.startingCapital,
+          members: res.body.members.map(member => {
+          return {
+            name: member[0].username,
+            values: member[1].historicalValue.map((value, i) => {
+              return {
+                date: i,
+                value: value
+              }
+            }),
+            currentValue: member[1].currentValue,
+            delta: (parseFloat(member[1].historicalValue.splice(-1)) - parseFloat(res.body.startingCapital)) / parseFloat(res.body.startingCapital)
+          }
+        })
+      }
+      });
+      this.forceUpdate();
+    });
+    console.log("******");
+    console.log(this.state.league);
+    console.log("******booom goes the dynamite****");}
+
+
+
   renderLines() {
     return this.state.league.members.map((member, i) => {
       return(
@@ -113,10 +109,17 @@ export default class LeagueHome extends Component {
     });
   }
 
+  async onPress(index) {
+    this.props.navigation.navigate(this.props.presses[index], {
+      leagueId: this.props.navigation.getParam("leagueId")
+    })
+  }
+
+
   render() {
     var tableHeader = ["Player", "Networth", "Delta"];
     var leaderboard = this.state.league.members.map(
-      (player) => [player.name, player.capital, player.delta]);
+      (player) => [player.name, player.currentValue, player.delta + "%"]);
 
       return (
       <SafeAreaView style={styles.container}>

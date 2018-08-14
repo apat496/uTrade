@@ -74,6 +74,8 @@ async function getData(method, body, userId = "", leagueId = "", leagueCode = ""
     params.body = JSON.stringify(body);
   }
 
+  console.log(url);
+  console.log(params);
   const response = await fetch(url, params);
   const responseJson = await response.json();
 

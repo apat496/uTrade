@@ -139,7 +139,7 @@ export default class Dashboard extends Component {
       return(
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate("LeagueHome", {
-            leagueId: leagueId
+            leagueId: league.id
           })}
           key={i}
         >
