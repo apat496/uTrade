@@ -85,7 +85,7 @@ export default class LeagueHome extends Component {
             }),
             currentValue: member[1].currentValue,
             delta: (parseFloat(member[1].historicalValue.splice(-1)) -
-                    parseFloat(res.body.startingCapital)) /
+                    parseFloat(res.body.startingCapital)) * 100 /
                     parseFloat(res.body.startingCapital)
           }
         })

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
+  Clipboard,
   Dimensions,
   Image,
   KeyboardAvoidingView,
@@ -83,6 +84,14 @@ export default class CreateLeague extends Component {
               <TouchableOpacity
                 style={styles.buttonContainer}
                 onPress={() => {
+                  Clipboard.setString(this.state.leagueCode)
+                }}
+              >
+                <Text style={styles.buttonText}>Copy to Clipboard</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => {
                   this.setState({ modal: false });
                   this.props.navigation.navigate("LeagueHome", {
                     leagueId: this.state.leagueId
@@ -112,7 +121,6 @@ export default class CreateLeague extends Component {
             placeholderTextColor="rgba(0,0,0,0.7)"
             returnKeyType="next"
             ref={input => (this.nameInput = input)}
-            onSubmitEditing={() => this.startDateInput.focus()}
           />
           <DatePicker
             style={styles.dateInput}

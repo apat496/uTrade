@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     left: 10,
     height: 700,
-    width: 400
+    width: 350
   }
 });
 AppRegistry.registerComponent("Help", () => Help);

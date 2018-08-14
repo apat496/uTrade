@@ -51,7 +51,7 @@ export default class JoinLeague extends Component {
     if (responseJson.status === 200) {
       // Redirect to League Home
       this.props.navigation.navigate("LeagueHome", {
-        leagueId: res.body.leagueId
+        leagueId: responseJson.body.leagueId
       });
     } else {
       // Save Failure Status for Future Use
