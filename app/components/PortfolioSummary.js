@@ -42,6 +42,7 @@ export default class PortfolioSummary extends Component {
       username: "",
       leagueName: "",
       currentValue: "",
+      capital: "",
       historicalData: [],
       holdings: [],
       winners: [],
@@ -64,6 +65,7 @@ export default class PortfolioSummary extends Component {
     // Back End Call to Get Portfolio Info for Passes IDs
     getPortfolio(userId, leagueId).then(res => this.setState({
       currentValue: Math.round(res.body.currentValue * 100) / 100,
+      capital: res.body.capital,
       historicalData: res.body.historicalValue.map((val, i) => {
         return {
           date: i,
@@ -114,6 +116,7 @@ export default class PortfolioSummary extends Component {
         <Text style={styles.text}>{this.state.leagueName}</Text>
         <Text style={styles.text}>{this.state.username + "'s Portfolio"}</Text>
         <Text style={styles.text}>(${this.state.currentValue})</Text>
+
         {
           this.state.historicalData.length &&
           <VictoryChart theme={VictoryTheme.material}
@@ -129,6 +132,7 @@ export default class PortfolioSummary extends Component {
             />
           </VictoryChart>
         }
+        <Text style={styles.cashtext}>Free Cash: ${this.state.capital}</Text>
         <ScrollableTabView>
           <ScrollView tabLabel="Winners">
             <Table headerContent={tableHeader}
@@ -151,6 +155,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "powderblue",
     alignItems: "center"
+  },
+  cashtext: {
+    color: "black",
+    fontSize: 20,
+    fontWeight: "bold",
   },
   text: {
     color: "white",

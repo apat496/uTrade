@@ -23,7 +23,7 @@ export default class Help extends Component {
     },
     header: null
   };
-  
+
   constructor() {
     super();
     this.state = {
@@ -64,7 +64,7 @@ export default class Help extends Component {
         <NavBar navigation={this.props.navigation} />
           <ScrollView>
     	    <Text style={styles.videotitle}> Create a League </Text>
-  	      <Video source={{ uri: 'https://s3.us-east-2.amazonaws.com/utrade-videos/TestVideoOne.mp4' }}
+  	      <Video source={{ uri: 'https://s3.us-east-2.amazonaws.com/utrade-videos/TestVideoOne.mov' }}
           style={styles.video}
           isLooping
           shouldPlay={this.state.shouldPlayOne}
@@ -85,7 +85,7 @@ export default class Help extends Component {
             />
           </View>
           <Text style={styles.videotitle}> Buy/Sell Stock </Text>
-          <Video source={{ uri: 'https://s3.us-east-2.amazonaws.com/utrade-videos/TestVideoTwo.mp4' }}
+          <Video source={{ uri: 'https://s3.us-east-2.amazonaws.com/utrade-videos/TestVideoTwo.mov' }}
           style={styles.video}
           shouldPlay={this.state.shouldPlayTwo}
           isMuted={this.state.muteTwo}
@@ -134,8 +134,8 @@ const styles = StyleSheet.create({
   video: {
     marginTop: 20,
     left: 10,
-    height: 200,
-    width: 350
+    height: 700,
+    width: 400
   }
 });
 AppRegistry.registerComponent("Help", () => Help);
