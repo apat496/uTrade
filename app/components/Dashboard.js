@@ -192,7 +192,9 @@ export default class Dashboard extends Component {
           </View> :
           <Swiper style={styles.wrapper}
                   index={this.state.leagueNum}
-                  onIndexChanged={leagueNum => this.setState({ leagueNum })}>
+                  onIndexChanged={leagueNum => this.setState({ leagueNum })}
+                  dotColor="powderblue"
+                  activeDotColor="powderblue">
             {this.renderSwipes()}
           </Swiper>
         }
