@@ -76,7 +76,8 @@ export default class CreateLeague extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <Modal transparent={true}
-               visible={this.state.modal}>
+               visible={this.state.modal}
+               onRequestClose={() => {}}>
           <View style={styles.modal}>
               <Text style={styles.modaltext}>{this.state.name + " Successfully Created!"}</Text>
               <Text style={styles.modaltext}>Use Code Below to Share League with Friends</Text>
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: 350,
+    width: window.width,
     marginBottom: 10,
     backgroundColor: "rgba(255,255,255,0.2)",
     color: "black",
@@ -214,13 +215,13 @@ const styles = StyleSheet.create({
   },
   dateInput: {
     height: 40,
-    width: 350,
+    width: window.width,
     marginBottom: 10,
     paddingHorizontal: 10
   },
   subtext: {
     color: "black",
-    width: 350,
+    width: window.width,
     textAlign: "center",
     fontSize: 40,
     fontWeight: "bold",
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
   },
   failureText: {
     color: "red",
-    width: 160,
+    width: window.width,
     textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",

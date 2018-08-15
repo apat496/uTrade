@@ -66,6 +66,18 @@ export default class JoinLeague extends Component {
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={require("./utrade.png")} />
           <Text style={styles.subtext}>Join League</Text>
+          {
+            this.state.joinStatus === 100 &&
+            <Text style={styles.failureText}>Input Field is Blank</Text>
+          }
+          {
+            this.state.joinStatus === 403 &&
+            <Text style={styles.failureText}>League Already Joined</Text>
+          }
+          {
+            this.state.joinStatus === 404 &&
+            <Text style={styles.failureText}>League Not Found</Text>
+          }
         </View>
         <KeyboardAvoidingView behavior="padding"
                               enabled>
@@ -107,7 +119,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: 350,
+    width: window.width,
     marginBottom: 10,
     backgroundColor: "rgba(255,255,255,0.2)",
     color: "black",
@@ -115,9 +127,17 @@ const styles = StyleSheet.create({
   },
   subtext: {
     color: "black",
-    width: 350,
+    width: window.width,
     textAlign: "center",
     fontSize: 40,
+    fontWeight: "bold",
+    marginTop: 20
+  },
+  failureText: {
+    color: "red",
+    width: window.width,
+    textAlign: "center",
+    fontSize: 20,
     fontWeight: "bold",
     marginTop: 20
   },

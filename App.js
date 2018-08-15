@@ -20,6 +20,7 @@ import StockSummary from "./app/components/StockSummary";
 import AccountInfo from "./app/components/AccountInfo"
 import Help from "./app/components/Help"
 
+console.disableYellowBox = true;
 class Home extends Component<{}> {
   static navigationOptions = {
     headerStyle: {

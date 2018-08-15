@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
+  Dimensions,
   Image,
   KeyboardAvoidingView,
   SafeAreaView,
@@ -112,6 +113,7 @@ export default class Login extends Component {
   }
 }
 
+const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    width: 350,
+    width: window.width,
     marginBottom: 10,
     backgroundColor: "rgba(255,255,255,0.2)",
     color: "black",
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
   },
   subtext: {
     color: "black",
-    width: 160,
+    width: window.width,
     textAlign: "center",
     fontSize: 40,
     fontWeight: "bold",
@@ -145,7 +147,7 @@ const styles = StyleSheet.create({
   },
   failureText: {
     color: "red",
-    width: 160,
+    width: window.width,
     textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",

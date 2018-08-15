@@ -41,8 +41,8 @@ export default class PortfolioSummary extends Component {
     this.state = {
       username: "",
       leagueName: "",
-      currentValue: "",
-      capital: "",
+      currentValue: 0,
+      capital: 0,
       historicalData: [],
       holdings: [],
       winners: [],
@@ -80,19 +80,16 @@ export default class PortfolioSummary extends Component {
       var tickers = res.body.map(ticker => {
         return {
           ticker: ticker.ticker,
-          price: "$" + ticker.price,
+          price: "$" + ticker.price.toFixed(2),
           delta: ticker.delta + "%"
         };
       });
 
-      // Populate Winners
-      [].push.apply(this.state.winners, tickers);
-
-      // Populate Losers
-      [].push.apply(this.state.losers, tickers.reverse());
-
-      // Force Render to Render Added Winners and Losers
-      this.forceUpdate();
+      // Populate Winners and Losers
+      this.setState({
+        winners: tickers,
+        losers: tickers.reverse()
+      });
     });
   }
 
@@ -115,8 +112,7 @@ export default class PortfolioSummary extends Component {
         <NavBar navigation={this.props.navigation} />
         <Text style={styles.text}>{this.state.leagueName}</Text>
         <Text style={styles.text}>{this.state.username + "'s Portfolio"}</Text>
-        <Text style={styles.text}>(${this.state.currentValue})</Text>
-
+        <Text style={styles.text}>(${this.state.currentValue.toFixed(2)})</Text>
         {
           this.state.historicalData.length &&
           <VictoryChart theme={VictoryTheme.material}
@@ -132,7 +128,7 @@ export default class PortfolioSummary extends Component {
             />
           </VictoryChart>
         }
-        <Text style={styles.cashtext}>Free Cash: ${this.state.capital}</Text>
+        <Text style={styles.cashtext}>Free Cash: ${this.state.capital.toFixed(2)}</Text>
         <ScrollableTabView>
           <ScrollView tabLabel="Winners">
             <Table headerContent={tableHeader}

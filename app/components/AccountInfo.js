@@ -42,12 +42,11 @@ export default class AccountInfo extends Component {
 
   }
 
-  componentDidMount(){
+  componentDidMount() {
     const responseJson = getUserInfo(global.userId).then(obj => this.setState({
       userName: obj.username,
       email: obj.email
-    })
-  );
+    }));
   }
 
   async onChangePassword() {
@@ -162,7 +161,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    width: 350,
+    width: window.width,
     marginBottom: 10,
     backgroundColor: "dimgray",
     color: "black",
@@ -192,7 +191,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: 350,
+    width: window.width,
     marginBottom: 10,
     backgroundColor: "rgba(255,255,255,0.2)",
     color: "black",
@@ -216,7 +215,7 @@ const styles = StyleSheet.create({
   },
   failureText: {
     color: "red",
-    width: 160,
+    width: window.width,
     textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",

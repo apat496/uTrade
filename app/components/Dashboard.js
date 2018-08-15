@@ -16,6 +16,7 @@ import {
   VictoryAxis,
   VictoryChart,
   VictoryLine,
+  VictoryScatter,
   VictoryTheme
 } from "victory-native";
 
@@ -72,34 +73,33 @@ export default class Dashboard extends Component {
   componentDidMount() {
     // Back End Call to Get LeagueIDs for Leagues User is in
     getUserLeagues(global.userId).then(res => {
-      res.body.forEach(leagueId => {
-        // Back End Call to Get League Info for Leagues User is in
-        getLeagueInfo(leagueId).then(res2 => {
-          var league = res2.body;
+        // Back End Calls to Get League Info for Leagues User is in
+        var leagueIds = res.body;
+        Promise.all(leagueIds.map(getLeagueInfo)).then(res2s => {
+          var leagues = res2s.map(res2 => res2.body)
+                             .map((league, leagueNum) => {
+                               return {
+                                 id: leagueIds[leagueNum],
+                                 name: league.leagueName,
+                                 members: league.members.map(member => {
+                                   return {
+                                     name: member[0].username,
+                                     values: member[1].historicalValue.map((value, i) => {
+                                       return {
+                                         date: i,
+                                         value: value
+                                       }
+                                     })
+                                   }
+                                 })
+                               }
+                             });
+          // Save Leagues
+          this.setState({ leagues });
 
-          // Add League to State for Swiper
-          this.state.leagues.push({
-            id: leagueId,
-            name: league.leagueName,
-            members: league.members.map(member => {
-              return {
-                name: member[0].username,
-                values: member[1].historicalValue.map((value, i) => {
-                  return {
-                    date: i,
-                    value: value
-                  }
-                })
-              }
-            })
-          });
           // Save League Objects for Future Use
-          global.leagues = this.state.leagues;
-
-          // Force Render to Render Added League
-          this.forceUpdate();
+          global.leagues = leagues;
         });
-      });
     });
 
     // Backend Call to Get Stocks for Winners and Losers
@@ -107,19 +107,16 @@ export default class Dashboard extends Component {
       var tickers = res.body.map(ticker => {
         return {
           ticker: ticker.ticker,
-          price: "$" + ticker.price,
+          price: "$" + ticker.price.toFixed(2),
           delta: ticker.delta + "%"
         };
       });
 
-      // Populate Winners
-      [].push.apply(this.state.winners, tickers.slice(0, 10));
-
-      // Populate Losers
-      [].push.apply(this.state.losers, tickers.splice(-10).reverse());
-
-      // Force Render to Render Added Winners and Losers
-      this.forceUpdate();
+      // Populate Winners and Losers
+      this.setState({
+        winners: tickers.slice(0, 10),
+        losers: tickers.splice(-10).reverse()
+      })
     });
   }
 
@@ -131,18 +128,50 @@ export default class Dashboard extends Component {
       if(member.values.length === 0) return;
 
       // Render Line
-      return (
+      return member.values.length !== 1 ? (
         <VictoryLine
           style={{
             data: { stroke: colors[i] },
-            parent: { border: "1px solid #ccc"}
+            parent: { border: "1px solid #ccc" }
+          }}
+          domain={{
+            x: [
+              member.values[0].date,
+              member.values.slice(-1).pop().date + 1
+            ],
+            y: [
+              Math.min.apply(Math, member.values.map(pair => pair.value)),
+              Math.max.apply(Math, member.values.map(pair => pair.value)) + 1
+            ]
           }}
           data={member.values}
           x="date"
           y="value"
           key={i}
         />
-      );
+      ) :
+      (
+        <VictoryScatter
+          style={{
+            data: { stroke: colors[i] },
+            parent: { border: "1px solid #ccc" }
+          }}
+          domain={{
+            x: [
+              member.values[0].date,
+              member.values.slice(-1).pop().date + 1
+            ],
+            y: [
+              Math.min.apply(Math, member.values.map(pair => pair.value)),
+              Math.max.apply(Math, member.values.map(pair => pair.value)) + 1
+            ]
+          }}
+          data={member.values}
+          x="date"
+          y="value"
+          key={i}
+        />
+      )
     });
   }
 
@@ -159,10 +188,14 @@ export default class Dashboard extends Component {
         >
           <View style={styles.slide}>
             <Text style={styles.text}>{league.name}</Text>
-            <VictoryChart theme={VictoryTheme.material}
-                          padding={{ top: 5, bottom: 125, left: 75, right: 50 }}>
-              {this.renderLines(i)}
-            </VictoryChart>
+            {
+              league.members.length !== 0 &&
+              league.members.some(member => member.values.length !== 0) &&
+              <VictoryChart theme={VictoryTheme.material}
+                            padding={{ top: 5, bottom: 125, left: 75, right: 50 }}>
+                {this.renderLines(i)}
+              </VictoryChart>
+            }
           </View>
         </TouchableOpacity>
       );
@@ -191,10 +224,8 @@ export default class Dashboard extends Component {
             <Text style={styles.text}>Join or Create a League</Text>
           </View> :
           <Swiper style={styles.wrapper}
-                  index={this.state.leagueNum}
-                  onIndexChanged={leagueNum => this.setState({ leagueNum })}
-                  dotColor="powderblue"
-                  activeDotColor="powderblue">
+                  dotColor="rgba(0,0,0,0)"
+                  activeDotColor="rgba(0,0,0,0)">
             {this.renderSwipes()}
           </Swiper>
         }

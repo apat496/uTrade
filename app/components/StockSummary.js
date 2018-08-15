@@ -3,6 +3,7 @@ import {
   AppRegistry,
   Dimensions,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -42,7 +43,7 @@ export default class StockSummary extends Component {
     this.state = {
       ticker: "",
       stockInfo: {
-        price: "",
+        price: 0,
         dayHigh: "",
         dayLow: "",
         monthHigh: "",
@@ -67,12 +68,12 @@ export default class StockSummary extends Component {
         var stock = res.body;
         var stockInfo = {
           price: stock.currentValue,
-          dayHigh: "$" + stock.todaysHigh,
-          dayLow: "$" + stock.todaysLow,
-          monthHigh: "$" + stock.monthHigh,
-          monthLow: "$" + stock.monthLow,
-          yearHigh: "$" + stock.yearHigh,
-          yearLow: "$" + stock.yearLow,
+          dayHigh: "$" + stock.todaysHigh.toFixed(2),
+          dayLow: "$" + stock.todaysLow.toFixed(2),
+          monthHigh: "$" + stock.monthHigh.toFixed(2),
+          monthLow: "$" + stock.monthLow.toFixed(2),
+          yearHigh: "$" + stock.yearHigh.toFixed(2),
+          yearLow: "$" + stock.yearLow.toFixed(2),
           historical: stock.yearSummary.reverse().map((value, i) => {
             return {
               date: i,
@@ -207,7 +208,7 @@ export default class StockSummary extends Component {
       <SafeAreaView style={styles.container}>
         <NavBar navigation={this.props.navigation}/>
         <Text style={styles.text}>{this.state.ticker}</Text>
-        <Text style={styles.text}>${stockInfo.price}</Text>
+        <Text style={styles.text}>${stockInfo.price.toFixed(2)}</Text>
         {this.renderChart()}
         <Text style={styles.text}>Stats</Text>
         <Table headerContent={statHeader}
@@ -218,7 +219,9 @@ export default class StockSummary extends Component {
           <View style={styles.headerRow}>
             {this.renderBSHeader()}
           </View>
-          {this.renderBSContents()}
+          <ScrollView>
+            {this.renderBSContents()}
+          </ScrollView>
         </View>
       </SafeAreaView>
     );

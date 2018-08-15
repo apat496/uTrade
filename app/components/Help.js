@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {
   AppRegistry,
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,8 +10,9 @@ import {
   TouchableOpacity
 } from "react-native";
 
+import { Icon } from "react-native-elements";
+
 import { Video } from 'expo';
-import { MaterialIcons, Octicons } from '@expo/vector-icons';
 
 import NavBar from "./NavBar";
 
@@ -71,13 +73,13 @@ export default class Help extends Component {
           isMuted={this.state.muteOne}
           resizeMode="cover"/>
           <View style={styles.controlBar}>
-            <MaterialIcons
+            <Icon
               name={this.state.muteOne ? "volume-mute" : "volume-up"}
               size={30}
               color="white"
               onPress={this.handleVolumeOne}
             />
-            <MaterialIcons
+            <Icon
               name={this.state.shouldPlayOne ? "pause" : "play-arrow"}
               size={30}
               color="white"
@@ -92,13 +94,13 @@ export default class Help extends Component {
           isLooping
           resizeMode="cover"/>
           <View style={styles.controlBar}>
-            <MaterialIcons
+            <Icon
               name={this.state.muteTwo ? "volume-mute" : "volume-up"}
               size={30}
               color="white"
               onPress={this.handleVolumeTwo}
             />
-            <MaterialIcons
+            <Icon
               name={this.state.shouldPlayTwo ? "pause" : "play-arrow"}
               size={30}
               color="white"
@@ -111,6 +113,7 @@ export default class Help extends Component {
   }
 }
 
+const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -135,7 +138,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     left: 10,
     height: 700,
-    width: 350
+    width: window.width
   }
 });
 AppRegistry.registerComponent("Help", () => Help);

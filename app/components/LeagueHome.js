@@ -84,9 +84,9 @@ export default class LeagueHome extends Component {
               }
             }),
             currentValue: member[1].currentValue,
-            delta: (parseFloat(member[1].historicalValue.splice(-1)) -
-                    parseFloat(res.body.startingCapital)) * 100 /
-                    parseFloat(res.body.startingCapital)
+            delta: Math.round(((parseFloat(member[1].historicalValue.splice(-1)) -
+                    parseFloat(res.body.startingCapital)) /
+                    parseFloat(res.body.startingCapital)) * 10000) / 100
           }
         })
       }
@@ -110,6 +110,16 @@ export default class LeagueHome extends Component {
             data: { stroke: colors[i] },
             parent: { border: "1px solid #ccc"}
           }}
+          domain={{
+            x: [
+              member.values[0].date,
+              member.values.slice(-1).pop().date + 1
+            ],
+            y: [
+              Math.min.apply(Math, member.values.map(pair => pair.value)),
+              Math.max.apply(Math, member.values.map(pair => pair.value)) + 1
+            ]
+          }}
           data={member.values}
           x="date"
           y="value"
@@ -125,7 +135,7 @@ export default class LeagueHome extends Component {
 
     // Prepare User Summary Contents
     var leaderboard = this.state.league.members.map(
-      (player) => [player.name, player.currentValue, player.delta + "%"]);
+      (player) => [player.name, "$" + player.currentValue.toFixed(2), player.delta + "%"]);
 
       return (
         <SafeAreaView style={styles.container}>

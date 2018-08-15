@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: 350,
+    width: window.width,
     marginBottom: 10,
     backgroundColor: "rgba(255,255,255,0.2)",
     color: "black",
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   subtext: {
     color: "black",
-    width: 160,
+    width: window.width,
     textAlign: "center",
     fontSize: 40,
     fontWeight: "bold",
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   failureText: {
     color: "red",
-    width: 160,
+    width: window.width,
     textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",
